@@ -1,77 +1,138 @@
 import { Graphics } from 'pixi.js';
+import gsap from 'gsap';
+
 
 class Cell {
-    constructor(posX, posY, width, height, id, active, addStrike) {
+    constructor(posX, posY, width, height, id, active, addStrike, addCheck) {
         this.square = new Graphics();
+        this.time = 2.0;
         this.active = active;
-        this.clickable = false; 
+        this.clicked = false;
+        this.clickable = false;
         this.posX = posX;
         this.posY = posY;
         this.width = width;
         this.height = height;
-        // this.square.position.x = posX; 
-        // this.square.position.y = posY; 
-
-        // this.square.lineStyle(4, 0x2E2C32, 1) // width color alpha
+        this.dimensions = { x: this.posX + 4, y: this.posY + 4, h: this.height - 8, w: this.width - 8, r: 10 }
+       
+        this.animation = gsap.from(this.dimensions, {
+            x: posX + 4 + ((width - 8) / 2),
+            y: Math.round(Math.random() * 600) - 1200, //posY + 4 + ((height -8)/2), 
+            w: 10,//width - 8, 
+            h: 10, //height - 8,
+            ease: 'elastic',
+            duration: 1.5,
+            delay: (Math.random() * 0.2),
+            paused: false,
+            onComplete: () => {
+                console.log("Load Anim Complete")
+            }
+        })
 
         this.square.interactive = true;
         this.square.buttonMode = true;
         this.square.click = (e) => {
             if (this.clickable) {
-                this.clicked(e)
+                this.onClick(e)
             }
         }
 
         this.addStrike = addStrike;
-
-
-
-        if (this.active) {
-            this.square.beginFill(0x4b85f0) //(0xBB81CD) // color 
-        } else {
-            this.square.beginFill(0xfcd21c) //(0x4F20C8)
-        }
-        this.draw();
-        // this.square.drawRoundedRect(this.posX, this.posY, this.width, this.height)
+        this.addCheck = addCheck; 
         
-        // this.square.rotation = 0; 
-        this.square.endFill();
-
     }
 
-    clicked(event) {
+    update(delta) {
+        this.draw();
+    }
+
+    onClick(event) {
+        this.animation.pause();
+        this.animation = gsap.from(this.dimensions, {
+            x: this.posX + 4 + ((this.width - 8) / 2),
+            y: this.posY + 4 + ((this.height - 8) / 2),
+            w: 2,//width - 8, 
+            h: 2, //height - 8,
+            ease: 'elastic',
+            duration: 1,
+            delay: 0,
+            paused: true,
+            onComplete: () => {
+                console.log("Load Anim Complete")
+            }
+        })
+        this.animation.resume();
+
+        this.clicked = true;
+
+
         if (this.active) {
-            this.square.clear()
-            this.square.beginFill(0x5EC77F)
-            // this.square.drawRoundedRect(this.posX, this.posY, this.width, this.height)
-            this.draw();
-            this.square.endFill()
+            this.addCheck(); 
         } else {
-            this.square.clear()
-            this.square.beginFill(0xDE3249)
-            // this.square.drawRoundedRect(this.posX, this.posY, this.width, this.height)
-            this.draw();
-            this.square.endFill()
             this.addStrike();
         }
+
     }
 
     hideActive() {
-        this.square.clear()
-        this.square.beginFill(0xfcd21c) //(0xBB81CD)
-        // this.square.drawRoundedRect(this.posX, this.posY, this.width, this.height)
-        this.draw();
-        this.square.endFill()
-        this.clickable = true; 
+        this.flipAnimate(() => {
+            this.clickable = true;
+        })
+ 
     }
 
-    unClickable() {
-        this.clickable = false; 
+    unClickable(onComplete) {
+        this.flipAnimate(() => {
+            this.clickable = false;
+            onComplete(); 
+        })
     }
-
 
     draw() {
-        this.square.drawRoundedRect(this.posX+4, this.posY+4, this.width-8, this.height-8)
+        const { x, y, h, w, r } = this.dimensions;
+
+        let color = 0x4b85f0 //0xfcd21c
+        if (this.clicked) {
+            if (this.active) {
+                color = 0x5EC77F
+            } else {
+                color = 0xDE3249
+            }
+        } else {
+            if (this.active && !this.clickable) {
+                color = 0xfcd21c //0x4b85f0
+            }
+        }
+        this.square.clear()
+        this.square.beginFill(color) //(0xBB81CD)
+        this.square.drawRoundedRect(x, y, w, h, r)
+        this.square.endFill()
+
+        // this.square.drawRoundedRect(this.posX+4, this.posY+4, this.width-8, this.height-8)
+    }
+
+    flipAnimate(onFlipCb) {
+        console.log("FLip Aimating")
+        this.animation.pause();
+        this.animation = gsap.to(this.dimensions, {
+            x: ((this.posX + 4) + ((this.width - 8)/2)),
+            w: 0,//width - 8, 
+            ease: 'power1',
+            duration: 0.2,
+            delay: Math.random() * 0.4,
+            // paused: true, 
+            onComplete: () => {
+                onFlipCb();
+                this.animation = gsap.to(this.dimensions, {
+                    x: this.posX + 4, 
+                    w: this.width - 8,
+                    ease: 'power1',
+                    duration: 0.2,
+                    delay: 0,
+                })
+            }
+        })
+        this.animation.resume();
     }
 }
 
