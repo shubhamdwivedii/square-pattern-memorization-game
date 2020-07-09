@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import Grid from './Grid'; 
 import Stars from './Stars';
+import Background from './Background'; 
 
 const game = new PIXI.Application({
     width: 600, 
@@ -57,7 +58,7 @@ const isMobile = WIDTH/HEIGHT <= 1;
 const gridWidth = isMobile ? WIDTH - 50 : WIDTH/3;
 const gridX = isMobile ? 25 : WIDTH/3; 
 const gridY = HEIGHT/2 - (gridWidth/2) - 50;
-
+const background = new Background(WIDTH, HEIGHT)
 const grid = new Grid(gridX, gridY, gridWidth, gridWidth, () => gameover(), () => gameclear())
 
 // const cell = new Cell(10, 10, 100, 100, '24')
@@ -91,6 +92,7 @@ function setup(loader, resources) {
     bunny.anchor.x = 0.5; 
     bunny.anchor.y = 0.5; 
 
+    background.draw(game.stage)
     grid.draw(game.stage)
     
     game.stage.addChild(bunny);
