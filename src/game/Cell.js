@@ -4,6 +4,7 @@ class Cell {
     constructor(posX, posY, width, height, id, active, addStrike) {
         this.square = new Graphics();
         this.active = active;
+        this.clickable = false; 
         this.posX = posX;
         this.posY = posY;
         this.width = width;
@@ -16,7 +17,9 @@ class Cell {
         this.square.interactive = true;
         this.square.buttonMode = true;
         this.square.click = (e) => {
-            this.clicked(e)
+            if (this.clickable) {
+                this.clicked(e)
+            }
         }
 
         this.addStrike = addStrike;
@@ -24,9 +27,9 @@ class Cell {
 
 
         if (this.active) {
-            this.square.beginFill(0x4F20C8)
+            this.square.beginFill(0x4b85f0) //(0xBB81CD) // color 
         } else {
-            this.square.beginFill(0xBB81CD) // color 
+            this.square.beginFill(0xfcd21c) //(0x4F20C8)
         }
         this.draw();
         // this.square.drawRoundedRect(this.posX, this.posY, this.width, this.height)
@@ -55,10 +58,15 @@ class Cell {
 
     hideActive() {
         this.square.clear()
-        this.square.beginFill(0xBB81CD)
+        this.square.beginFill(0xfcd21c) //(0xBB81CD)
         // this.square.drawRoundedRect(this.posX, this.posY, this.width, this.height)
         this.draw();
         this.square.endFill()
+        this.clickable = true; 
+    }
+
+    unClickable() {
+        this.clickable = false; 
     }
 
 

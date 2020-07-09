@@ -40,17 +40,18 @@ class Grid {
     }
 
     draw(stage) {
-        stage.addChild(this.board);
+        // stage.addChild(this.board);
         this.cells.forEach(cell => {
             stage.addChild(cell.square)
         })
     }
 
     clear(stage) {
-        this.cells.forEach(cell => {
-            stage.removeChild(cell.square)
-        })
-        this.cells = [];
+        // this.cells.forEach(cell => {
+        //     stage.removeChild(cell.square)
+        // })
+        // this.cells = [];
+        this.cells.forEach(cell => cell.unClickable())
     }
 
     addStrike() {
