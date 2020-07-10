@@ -1,49 +1,47 @@
 import { Graphics } from 'pixi.js' 
 import Cell from './Cell';
+import NextLevel from './LevelGenerator'; 
+
 const MAX_ROWS = 6;  
-const MAX_COLS = 6; 
-const MAX_COUNT = 18; 
+// const MAX_COLS = 6; 
+// const MAX_COUNT = 18; 
 class Grid {
-    constructor(posX, posY, gridWidth, gridHeight, gameover, gameclear) {
-        const ROW_SIZE = Math.floor(Math.random() * (MAX_ROWS-3)) + 4; 
-        const COL_SIZE = Math.floor(Math.random() * (MAX_COLS-3)) + 4; 
-        console.log("gggg", gameover)
+    constructor(posX, posY, gridWidth, gridHeight, isRandom, gameover, gameclear) {
+        // this.rowSize = Math.floor(Math.random() * (MAX_ROWS-3)) + 4; 
+        // this.colSize = Math.floor(Math.random() * (MAX_COLS-3)) + 4; 
+        this.width = gridWidth; 
+        this.height = gridHeight; 
+        this.isRandom = isRandom
         this.gameover = gameover; 
         this.gameclear = gameclear; 
         this.strikes = 0; 
-        this.checks = -1; 
         this.posX = posX; 
         this.posY = posY; 
         // this.gameover(); 
         this.board = new Graphics(); 
-        this.board.beginFill(0xDCC3C8)
+        this.board.beginFill(0x4b85f0, 0.1)
         this.board.drawRect(posX, posY, gridWidth, gridHeight)
         this.board.endFill(); 
 
         this.cellSize = gridWidth/MAX_ROWS; 
 
+        this.initialize(1)
+        
+        
+    }
+
+    initialize(round) {
+        const level = NextLevel(round, this.isRandom)
+        this.checks = level.checks; 
         this.cells = []
-
-        let count = 0; 
-        let checks = 0; 
-        for (let i = 0; i < ROW_SIZE; i++) {
-            for (let j = 0; j< COL_SIZE; j++) {
-
-                const posX = this.posX + i*this.cellSize + (gridWidth-(ROW_SIZE*this.cellSize))/2; 
-                const posY = this.posY + j*this.cellSize + (gridHeight-(COL_SIZE*this.cellSize))/2; 
-                let active = false;
-                if ((Math.floor(Math.random() * 10)%3 === 0) && count < MAX_COUNT){
-                    active = true; 
-                    count += 1; 
-                    checks += 1; 
-                }
-                this.cells.push(new Cell(posX, posY, this.cellSize, this.cellSize, `${i}-${j}`, active, () => this.addStrike(), () => this.addCheck()))
-            }
-        }
-
-        this.checks = checks; 
-
-        setTimeout(this.hideActiveCells.bind(this), 4000)
+        level.cells.forEach((row,j) => {
+            row.forEach((col,i) => {
+                const posX = this.posX + i*this.cellSize + (this.width-(level.cols*this.cellSize))/2;
+                const posY = this.posY + j*this.cellSize + (this.height-(level.rows*this.cellSize))/2;
+                this.cells.push(new Cell(posX, posY, this.cellSize, this.cellSize, `${i}-${j}`, (col===1),() => this.addStrike(), () => this.addCheck()))
+            })
+        })
+        setTimeout(this.showActiveCells.bind(this), 1600)
     }
 
     draw(stage) {
@@ -53,14 +51,20 @@ class Grid {
         })
     }
 
-    clear(stage) {
-        // this.cells.forEach(cell => {
-        //     stage.removeChild(cell.square)
-        // })
-        // this.cells = [];
-        this.cells.forEach(cell => cell.unClickable(() => {
+    clear(stage, onComplete) {
+        const last = this.cells.length - 1
+        this.cells.forEach((cell, idx) => cell.unClickable(() => {
             stage.removeChild(cell.square)
+            if (idx >= last) {
+                onComplete(); 
+            }
         }))
+    }
+
+    reset(stage, round) {
+        console.log("Resetting")
+        this.initialize(round);
+        this.draw(stage); 
     }
 
     update(delta) {
@@ -81,6 +85,13 @@ class Grid {
         if (this.strikes > 2) {
             this.gameover(); 
         }
+    }
+
+    showActiveCells() {
+        this.cells.forEach(cell => {
+            cell.showActive(); 
+        })
+        setTimeout(this.hideActiveCells.bind(this), 4000)
     }
 
 

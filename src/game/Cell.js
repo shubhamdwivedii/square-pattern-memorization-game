@@ -9,6 +9,7 @@ class Cell {
         this.active = active;
         this.clicked = false;
         this.clickable = false;
+        this.hidden = true; 
         this.posX = posX;
         this.posY = posY;
         this.width = width;
@@ -74,16 +75,24 @@ class Cell {
 
     }
 
+    showActive() {
+        this.flipAnimate(() => {
+            // this.clickable = false;
+            this.hidden = false;  
+        })
+    }
+
     hideActive() {
         this.flipAnimate(() => {
             this.clickable = true;
+            this.hidden = true; 
         })
- 
     }
 
     unClickable(onComplete) {
         this.flipAnimate(() => {
             this.clickable = false;
+            this.hidden = true; 
             onComplete(); 
         })
     }
@@ -94,12 +103,12 @@ class Cell {
         let color = 0x4b85f0 //0xfcd21c
         if (this.clicked) {
             if (this.active) {
-                color = 0x5EC77F
+                color = 0xfcd21c // green 0x5EC77F
             } else {
                 color = 0xDE3249
             }
         } else {
-            if (this.active && !this.clickable) {
+            if (this.active && !this.hidden) {
                 color = 0xfcd21c //0x4b85f0
             }
         }

@@ -8,10 +8,10 @@ class Background {
     constructor(screenWidth, screenHeight) {
         this.cellWidth = screenHeight/TILES_PER_COL; 
 
-        const topLeft = getTriangle(screenWidth, screenHeight, this.cellWidth)
-        console.log("LLLL", topLeft)
+        const tiles = getTriangle(screenWidth, screenHeight, this.cellWidth)
+        console.log("LLLL", tiles)
         // this.tiles = [new Tile(OFFSET, 0,this.cellWidth)]
-        this.tiles = topLeft.map(tile => new Tile(tile.x, tile.y, this.cellWidth - 4))
+        this.tiles = tiles.map(tile => new Tile(tile.x, tile.y, this.cellWidth - 4))
     }
 
     update(delta) {
@@ -48,77 +48,46 @@ class Tile {
 }
 
 function getTriangle(screenWidth, screenHeight, cellWidth) {
-    const triangles = []; 
-
-    const topLeft = []
-    // for (let i = 0; i < MATRIX_SIZE ; i++) {
-    //     for (let j =0; j < MATRIX_SIZE ; j++) {
-    //         if (i + j > MATRIX_SIZE -1) {
-    //             continue; 
-    //         } 
-    //         if (Math.floor(Math.random() * 10)%3 === 0) {
-    //             topLeft.push({ x: i * cellWidth, y: j* cellWidth }) 
-    //         }
-    //     }
-    // }
-    // for (let i = 0; i < MATRIX_SIZE ; i++) {
-    //     for (let j =0; j < MATRIX_SIZE ; j++) {
-    //         if (i + j > MATRIX_SIZE -1) {
-    //             continue; 
-    //         } 
-    //         if (Math.floor(Math.random() * 10)%3 === 0) {
-    //             topLeft.push({ x: i * cellWidth, y: j* cellWidth }) 
-    //         }
-    //     }
-    // }
-
+    const tiles = []
+    const topR = [[0,1,0,1,1], [0,0,1,0,1], [0,0,1,0,0], [0,0,0,0,1], [0,0,0,1,1]]
     const topL = [[0,1,0,1,0], [1,0,1,0,0], [1,1,0,0,0], [0,0,0,0,0], [1,0,0,0,0]]
+    const botL = [[0,0,0,0,0], [0,1,0,0,0], [0,0,1,0,0], [1,1,0,0,1], [0,1,1,1,0,1]]
+    const botR = [[0,0,0,0,0], [0,0,0,0,1], [0,0,1,0,0], [0,0,0,1,1], [1,1,0,1,1,1]]
+
     topL.forEach((row, i) => {
         row.forEach((col, j) => {
             if(col) {
-                topLeft.push({ x: j * cellWidth, y: i *cellWidth})
+                tiles.push({ x: j * cellWidth, y: i *cellWidth})
             }
         })
     })
 
-    // for (let i = 0; i < MATRIX_SIZE ; i++) {
-    //     for (let j =0; j < MATRIX_SIZE ; j++) {
-    //         if (i + j < MATRIX_SIZE -1) {
-    //             continue; 
-    //         } 
-    //         // if (Math.floor(Math.random() * 10)%3 === 0) {
-    //             topLeft.push({ x: screenWidth - (i * cellWidth), y: (j* cellWidth) }) 
-    //         // }
-    //     }
-    // }
+    topR.forEach((row, i) => {
+        row.forEach((col, j) => {
+            if(col) {
+                tiles.push({ x: (screenWidth - (5 * cellWidth)) +  j * cellWidth, y: i *cellWidth})
+            }
+        })
+    })
 
-    // for (let i = 0; i < MATRIX_SIZE ; i++) {
-    //     for (let j =0; j < MATRIX_SIZE ; j++) {
-    //         if (i + j > MATRIX_SIZE -1) {
-    //             continue; 
-    //         } 
-    //         // if (Math.floor(Math.random() * 10)%3 === 0) {
-    //             topLeft.push({ x: i * cellWidth, y: j* cellWidth }) 
-    //         // }
-    //     }
-    // }
+    botL.forEach((row, i) => {
+        row.forEach((col, j) => {
+            if(col) {
+                tiles.push({ x: j * cellWidth, y: (screenHeight - (5 * cellWidth)) + i *cellWidth})
+            }
+        })
+    })
 
-    // for (let i = 0; i < MATRIX_SIZE ; i++) {
-    //     for (let j =0; j < MATRIX_SIZE ; j++) {
-    //         if (i<j) {
-    //             continue; 
-    //         } 
-    //         // if (Math.floor(Math.random() * 10)%3 === 0) {
-    //             topLeft.push({ x: (i * cellWidth), y: j* cellWidth }) 
-    //         // }
-    //     }
-    // }
+    botR.forEach((row, i) => {
+        row.forEach((col, j) => {
+            if(col) {
+                tiles.push({ x: (screenWidth - (5 * cellWidth)) + j * cellWidth, y: (screenHeight - (5 * cellWidth)) + i *cellWidth})
+            }
+        })
+    })
 
-    return topLeft; 
-    // topLeft (i + j > MATRIX_SIZE -1)
-    // bottomLeft i>j
-    // topRight i<j
-    // bottomRight (i + j < MATRIX_SIZE -1)
+
+    return tiles; 
 }
 
 
