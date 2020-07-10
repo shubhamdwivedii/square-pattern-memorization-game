@@ -34,12 +34,12 @@ let round = 1;
 const stars = new Stars(WIDTH, HEIGHT);
 
 function gameover() {
-    // console.log("GameOver")
+    console.log("GameOver")
     // game.stage.addChild(stars.shape)
-    // game.stage.addChild(gameoverText)
-    // setTimeout(() => {
-    //     grid.clear(game.stage, () => console.log("Cleared"))
-    // }, 1500)
+    game.stage.addChild(gameoverText)
+    setTimeout(() => {
+        grid.clear(game.stage, () => console.log("Cleared"))
+    }, 1500)
 }
 
 function gameclear() {
@@ -54,7 +54,7 @@ function gameclear() {
         }, 1500)
     } else {
         setTimeout(() => {
-            grid.clear(game.stage, () => grid.reset(game.stage, round))
+            grid.clear(game.stage, () => setTimeout(() => grid.reset(game.stage, round), 400))
         }, 1500)
     }
 }
