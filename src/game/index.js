@@ -34,12 +34,12 @@ let round = 1;
 const stars = new Stars(WIDTH, HEIGHT);
 
 function gameover() {
-    // console.log("GameOver")
-    // game.stage.addChild(stars.shape)
-    // game.stage.addChild(gameoverText)
-    // setTimeout(() => {
-    //     grid.clear(game.stage, () => console.log("Cleared"))
-    // }, 1500)
+    console.log("GameOver")
+    game.stage.addChild(stars.shape)
+    game.stage.addChild(gameoverText)
+    setTimeout(() => {
+        grid.clear(game.stage, () => console.log("Cleared"))
+    }, 1500)
 }
 
 function gameclear() {
