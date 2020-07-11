@@ -103,8 +103,8 @@ class Grid {
         console.log("add Strike", this.strikes)
         this.strikes += 1; 
         if (this.strikes > 2) {
-            this.isover = true; 
-            this.gameover(); 
+            // this.isover = true; 
+            // this.gameover(); 
         }
     }
 
