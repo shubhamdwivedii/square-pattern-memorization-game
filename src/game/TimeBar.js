@@ -5,7 +5,6 @@ import gsap from 'gsap';
 
 class TimeBar {
     constructor(posX, posY, width, height, demoTime, playTime) {
-        console.log("constructing TimeBar")
         this.posX = posX; 
         this.posY = posY; 
         this.width = width; 
@@ -91,20 +90,5 @@ class TimeBar {
         this.animation && this.animation.resume();
     }
 }
-
-
-function gradient(from, to, w, h) {
-    const c = document.createElement("canvas");
-    const ctx = c.getContext("2d");
-    const grd = ctx.createLinearGradient(0,0,100,100);
-    grd.addColorStop(0, from);
-    grd.addColorStop(1, to);
-    ctx.fillStyle = grd;
-    ctx.fillRect(0,0,w,h);
-    return new PIXI.Texture.from(c);
-  }
-
-
-
 
 export default TimeBar; 

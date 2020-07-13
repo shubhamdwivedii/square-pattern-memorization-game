@@ -1,7 +1,11 @@
 import * as PIXI from 'pixi.js';
 import Grid from './Grid'; 
-import Stars from './Stars';
-import Background from './Background'; 
+// import Stars from './Stars';
+import GameOver from './GameOver'; 
+import Background from './Background'
+import closeImg from './assets/close.png'; 
+import muteImg from './assets/sound.png';
+import Header from './Header'; 
 
 const game = new PIXI.Application({
     width: 600, 
@@ -13,30 +17,19 @@ const game = new PIXI.Application({
 
 game.renderer.resize(window.innerWidth, window.innerHeight)
 
-// let gameoverText = new PIXI.Text('Game Over',{fontFamily : 'Apercu', fontSize: 24, fill : 0xff1010, align : 'center'});
-const fontStyle = new PIXI.TextStyle({
-    fontFamily: "Courier New",
-    fontWeight: "bold",
-    align: 'center', 
-});
-const gameoverText = new PIXI.Text('Game Over', fontStyle);
-const gameclearText = new PIXI.Text('Grid Clear!', fontStyle);
-
 
 let STATE = play, WIDTH = game.renderer.width, HEIGHT = game.renderer.height; 
 const MAX_ROUNDS = 12; 
-gameoverText.x = WIDTH/2 - 60; 
-gameoverText.y = HEIGHT/2 - 20; 
-
 
 let round = 1; 
 
-const stars = new Stars(WIDTH, HEIGHT);
+// const stars = new Stars(WIDTH, HEIGHT);
 
-function gameover() {
+
+function onGameOver() {
     console.log("GameOver")
     // game.stage.addChild(stars.shape)
-    game.stage.addChild(gameoverText)
+    gameOver.draw(game.stage)
     setTimeout(() => {
         grid.clear(game.stage, () => console.log("Cleared"))
     }, 1500)
@@ -48,13 +41,14 @@ function gameclear() {
     if (round > MAX_ROUNDS) {
         setTimeout(() => {
             grid.clear(game.stage, () => {
-                game.stage.addChild(stars.shape)
-                game.stage.addChild(gameclearText)
+                // game.stage.addChild(stars.shape)
+                gameOver.draw(game.stage)
             })
         }, 1500)
     } else {
         setTimeout(() => {
             grid.clear(game.stage, () => setTimeout(() => grid.reset(game.stage, round), 400))
+            header.next(); 
         }, 1500)
     }
 }
@@ -66,9 +60,15 @@ const isMobile = WIDTH/HEIGHT <= 1;
 
 const gridWidth = isMobile ? WIDTH - 50 : WIDTH/3;
 const gridX = isMobile ? 25 : WIDTH/3; 
-const gridY = HEIGHT/2 - (gridWidth/2) - 50;
-const background = new Background(WIDTH, HEIGHT)
-const grid = new Grid(gridX, gridY, gridWidth, gridWidth, false, () => gameover(), () => gameclear())
+const gridY = HEIGHT/2 - (gridWidth/2) + 50;
+
+const gameOver = new GameOver(gridX, gridY, gridWidth, WIDTH, HEIGHT, isMobile, round)
+
+// gameOver.draw(game.stage) // remove later
+
+const background = new Background(WIDTH, HEIGHT);
+let header; 
+const grid = new Grid(gridX, gridY, gridWidth, gridWidth, round, false, () => onGameOver(), () => gameclear())
 
 // const cell = new Cell(10, 10, 100, 100, '24')
 
@@ -85,13 +85,20 @@ function loadingComplete() {
 game.loader.onComplete.add(loadingComplete); 
 game.loader.onProgress.add(loadingProgress); 
 
-game.loader.add('bunny', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/IaUrttj.png').load(setup)
+
+game.loader
+    .add('bunny', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/IaUrttj.png')
+    .add('closeBtn', closeImg)
+    .add('muteBtn', muteImg)
+    .load(setup)
 
 
 function setup(loader, resources) {
     console.log("Setup Initiated")
+    // bunny = new PIXI.Sprite.from('./assets/bunny.png'); //
     bunny = new PIXI.Sprite(resources.bunny.texture);
 
+    header = new Header(gridX, gridY, gridWidth, resources, round, MAX_ROUNDS, isMobile)
     // STATE = play; 
 
 
@@ -102,6 +109,7 @@ function setup(loader, resources) {
     bunny.anchor.y = 0.5; 
 
     background.draw(game.stage)
+    header.draw(game.stage)
     grid.draw(game.stage)
     
     game.stage.addChild(bunny);
@@ -121,6 +129,7 @@ function gameloop(delta) {
 function play(delta){
     bunny.rotation += delta * 0.1; 
     grid.update(delta); 
+    gameOver.update(delta, round);
 }
 
 

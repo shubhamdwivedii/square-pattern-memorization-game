@@ -7,7 +7,7 @@ const MAX_ROWS = 6;
 // const MAX_COLS = 6; 
 // const MAX_COUNT = 18; 
 class Grid {
-    constructor(posX, posY, gridWidth, gridHeight, isRandom, gameover, gameclear) {
+    constructor(posX, posY, gridWidth, gridHeight, round, isRandom, gameover, gameclear) {
         // this.rowSize = Math.floor(Math.random() * (MAX_ROWS-3)) + 4; 
         // this.colSize = Math.floor(Math.random() * (MAX_COLS-3)) + 4; 
         this.width = gridWidth; 
@@ -27,7 +27,7 @@ class Grid {
         this.board.endFill(); 
 
         this.cellSize = gridWidth/MAX_ROWS; 
-        this.initialize(1)
+        this.initialize(round)
         
         
     }
