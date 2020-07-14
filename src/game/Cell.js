@@ -1,6 +1,10 @@
 import { Graphics } from 'pixi.js';
 import gsap from 'gsap';
-
+import * as PIXI from 'pixi.js';
+import sound from 'pixi-sound';
+import strikeSnd from './assets/strike.mp3'; 
+import checkSnd from './assets/check.mp3'; 
+import winSnd from './assets/win.mp3';
 
 class Cell {
     constructor(posX, posY, width, height, id, active, addStrike, addCheck, isOver) {
@@ -30,6 +34,10 @@ class Cell {
                 console.log("Load Anim Complete")
             }
         })
+
+        this.strikeSound = sound.Sound.from(strikeSnd);
+        this.checkSound = sound.Sound.from(checkSnd);
+        this.winSound = sound.Sound.from(winSnd);
 
         this.square.interactive = true;
         this.square.buttonMode = true;
@@ -62,9 +70,13 @@ class Cell {
                 const isLast = this.addCheck();
                 if (isLast) {
                     this.isLast = true;
+                    this.winSound.play();
+                } else {
+                    this.checkSound.play();
                 }
             } else {
                 this.addStrike();
+                this.strikeSound.play(); 
             }
 
             this.clicked = true;

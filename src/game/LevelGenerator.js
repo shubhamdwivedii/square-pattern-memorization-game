@@ -30,6 +30,14 @@ function generate(round) {
 }
 
 const fixedLevels = [
+    // { // Test 
+    //     rows: 4, cols: 4, cells: [
+    //         [1, 0, 0, 0],
+    //         [0, 1, 0, 0],
+    //         [0, 0, 1, 0],
+    //         [0, 0, 0, 1],
+    //     ], demo: 10, time: 100, checks: 4,
+    // },
     { // 1
         rows: 5, cols: 4, cells: [
             [1, 0, 0, 0],

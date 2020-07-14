@@ -39,16 +39,22 @@ class Stars {
         
     }
 
-    draw(stage) {
+    draw(stage, round) {
+        this.round = round; 
+        this.starOne.texture = round >= 4 ? this.starTex : this.altTex;
+        this.starTwo.texture = round >= 8 ? this.starTex : this.altTex;
+        this.starThree.texture = round === 12 ? this.starTex : this.altTex;
+        this.remark.text = getText(round)
+
         stage.addChild(this.starOne)
         stage.addChild(this.starTwo)
         stage.addChild(this.starThree)
         stage.addChild(this.remark)
         this.animation = gsap.from(this, {
-            posY: 2000, 
-            ease: 'elastic',
+            posY: -1500, 
+            ease: 'power3',
             delay: 0.4, 
-            duration: 2, 
+            duration: 1.5, 
             paused: false,
             onComplete: () => {
                 console.log("StarAnim Done")
@@ -56,11 +62,26 @@ class Stars {
         })
     }
 
-    update(delta, round) {
-        this.round = round; 
-        this.starOne.texture = round >= 4 ? this.starTex : this.altTex;
-        this.starTwo.texture = round >= 8 ? this.starTex : this.altTex;
-        this.starThree.texture = round === 12 ? this.starTex : this.altTex;
+    remove(stage) {
+        const posY = this.posY; 
+        this.animation = gsap.to(this, {
+            posY: -1500, 
+            ease: 'power3',
+            delay: 0.4, 
+            duration: 1.5, 
+            paused: false,
+            onComplete: () => {
+                console.log("StarAnim Done")
+                stage.removeChild(this.starOne)
+                stage.removeChild(this.starTwo)
+                stage.removeChild(this.starThree)
+                stage.removeChild(this.remark)
+                this.posY = posY; 
+            }
+        })
+    }
+
+    update(delta) {
         this.starOne.x = this.posX + this.width/2 - this.starTwo.width/2 - this.starOne.width/2; 
         this.starOne.y = this.posY - this.width/4 + this.starOne.height// - this.starOne.height/4;
         // this.starOne.rotation -= 0.2; 
@@ -69,8 +90,6 @@ class Stars {
 
         this.starThree.x = this.posX + this.width/2 + this.starTwo.width/2 + this.starThree.width/2; 
         this.starThree.y = this.posY - this.width/4 + this.starThree.height// - this.starThree.height/4;
-        
-        this.remark.text = getText(round)
 
         this.remark.x = this.posX + (this.width/2) - this.remark.width/2; 
         this.remark.y = this.posY - (this.width/6) + this.starTwo.height - (this.remark.height/2); 
@@ -91,9 +110,6 @@ class Stars {
         const remark = new PIXI.Text(text, fontStyle)
         return remark; 
     }
-
-    
-
 }
 
 function gradient(from, to) {

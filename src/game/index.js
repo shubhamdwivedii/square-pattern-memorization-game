@@ -1,54 +1,78 @@
 import * as PIXI from 'pixi.js';
-import Grid from './Grid'; 
+import Grid from './Grid';
 // import Stars from './Stars';
-import GameOver from './GameOver'; 
+import GameOver from './GameOver';
 import Background from './Background'
-import closeImg from './assets/close.png'; 
+import closeImg from './assets/close.png';
 import muteImg from './assets/sound.png';
-import Header from './Header'; 
+import Header from './Header';
 
 const game = new PIXI.Application({
-    width: 600, 
-    height: 600, 
+    width: 600,
+    height: 600,
     antialias: true,
-    resolution: 1, 
+    resolution: 1,
     transparent: true,
 });
 
 game.renderer.resize(window.innerWidth, window.innerHeight)
 
 
-let STATE = play, WIDTH = game.renderer.width, HEIGHT = game.renderer.height; 
-const MAX_ROUNDS = 12; 
+let STATE = play;
+export const WIDTH = game.renderer.width;
+export const HEIGHT = game.renderer.height;
 
-let round = 1; 
+export const isMobile = WIDTH / HEIGHT <= 1;
+export const gridWidth = isMobile ? WIDTH - 50 : WIDTH / 3;
+export const gridX = isMobile ? 25 : WIDTH / 3;
+export const gridY = HEIGHT / 2 - (gridWidth / 2) + 50;
+
+
+const MAX_ROUNDS = 12;
+
+let round = 1;
+let totalDuration = 0;
+let totalCorrect = 0;
+let totalMoves = 0;
+
+
 
 // const stars = new Stars(WIDTH, HEIGHT);
 
 
-function onGameOver() {
-    console.log("GameOver")
-    // game.stage.addChild(stars.shape)
-    gameOver.draw(game.stage)
+function onGameOver(duration, correctMoves, movesTotal) {
+    console.log("GameOver", duration, correctMoves, movesTotal)
+    totalDuration += duration;
+    totalCorrect += correctMoves;
+    totalMoves += movesTotal;
+    // game.stage.addChild(stars.shape) 
     setTimeout(() => {
-        grid.clear(game.stage, () => console.log("Cleared"))
+        grid.clear(game.stage, () => {
+            header.remove(game.stage)
+            gameOver.draw(game.stage, round, totalDuration, totalCorrect / totalMoves)
+            console.log("Cleared")
+        })
     }, 1500)
 }
 
-function gameclear() {
-    console.log("GridClear")
-    round += 1; 
+function gameclear(duration, correctMoves, movesTotal) {
+    console.log("GridClear", duration, correctMoves, movesTotal)
+    totalDuration += duration;
+    totalCorrect += correctMoves;
+    totalMoves += movesTotal;
+    round += 1;
     if (round > MAX_ROUNDS) {
         setTimeout(() => {
             grid.clear(game.stage, () => {
                 // game.stage.addChild(stars.shape)
-                gameOver.draw(game.stage)
+                header.remove(game.stage)
+                gameOver.draw(game.stage, round - 1, totalDuration, totalCorrect / totalMoves)
             })
         }, 1500)
     } else {
         setTimeout(() => {
             grid.clear(game.stage, () => setTimeout(() => grid.reset(game.stage, round), 400))
-            header.next(); 
+            header.next();
         }, 1500)
     }
 }
@@ -56,34 +80,29 @@ function gameclear() {
 let bunny; //temp
 
 
-const isMobile = WIDTH/HEIGHT <= 1; 
 
-const gridWidth = isMobile ? WIDTH - 50 : WIDTH/3;
-const gridX = isMobile ? 25 : WIDTH/3; 
-const gridY = HEIGHT/2 - (gridWidth/2) + 50;
-
-const gameOver = new GameOver(gridX, gridY, gridWidth, WIDTH, HEIGHT, isMobile, round)
+const gameOver = new GameOver(gridX, gridY, gridWidth, WIDTH, HEIGHT, isMobile, round, restart)
 
 // gameOver.draw(game.stage) // remove later
 
 const background = new Background(WIDTH, HEIGHT);
-let header; 
-const grid = new Grid(gridX, gridY, gridWidth, gridWidth, round, false, () => onGameOver(), () => gameclear())
+let header;
+const grid = new Grid(gridX, gridY, gridWidth, gridWidth, round, false, (d, c, t) => onGameOver(d, c, t), (d, c, t) => gameclear(d, c, t))
 
 // const cell = new Cell(10, 10, 100, 100, '24')
 
 function loadingProgress(loader, resource) {
     console.log("Loading Progress")
     console.log("---loading:" + resource.url)
-    console.log("---progress: "+ loader.progress + "%")
+    console.log("---progress: " + loader.progress + "%")
 }
 
 function loadingComplete() {
     console.log("Loading Complete")
 }
 
-game.loader.onComplete.add(loadingComplete); 
-game.loader.onProgress.add(loadingProgress); 
+game.loader.onComplete.add(loadingComplete);
+game.loader.onProgress.add(loadingProgress);
 
 
 game.loader
@@ -98,27 +117,42 @@ function setup(loader, resources) {
     // bunny = new PIXI.Sprite.from('./assets/bunny.png'); //
     bunny = new PIXI.Sprite(resources.bunny.texture);
 
-    header = new Header(gridX, gridY, gridWidth, resources, round, MAX_ROUNDS, isMobile)
+    header = new Header(gridX, gridY, gridWidth, resources, round, MAX_ROUNDS, isMobile, onQuit, onMute)
     // STATE = play; 
 
 
-    bunny.x = WIDTH/2; 
-    bunny.y = HEIGHT/2; 
+    bunny.x = WIDTH / 2;
+    bunny.y = HEIGHT / 2;
 
-    bunny.anchor.x = 0.5; 
-    bunny.anchor.y = 0.5; 
+    bunny.anchor.x = 0.5;
+    bunny.anchor.y = 0.5;
 
     background.draw(game.stage)
     header.draw(game.stage)
     grid.draw(game.stage)
-    
+
     game.stage.addChild(bunny);
     // game.stage.removeChild(bunny);
-    bunny.visible = false; 
+    bunny.visible = false;
 
     // Ticker is called 60 times per second.
     game.ticker.add(gameloop)
 }
+
+
+function restart() {
+    console.log("Restarting Game")
+    round = 1;
+    totalDuration = 0;
+    totalCorrect = 0;
+    totalMoves = 0;
+    header.draw(game.stage) 
+    gameOver.remove(game.stage)
+    setTimeout(() => {
+        grid.reset(game.stage, round);
+    }, 1000)
+}
+
 
 
 function gameloop(delta) {
@@ -126,11 +160,20 @@ function gameloop(delta) {
 }
 
 
-function play(delta){
-    bunny.rotation += delta * 0.1; 
-    grid.update(delta); 
+function play(delta) {
+    bunny.rotation += delta * 0.1;
+    grid.update(delta);
     gameOver.update(delta, round);
+    header.update(delta)
 }
 
+
+function onMute() {
+    console.log("Muting Sounds")
+}
+
+function onQuit() {
+    console.log("Quitting Game")
+}
 
 export default game; 

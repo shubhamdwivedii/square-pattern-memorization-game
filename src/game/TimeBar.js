@@ -10,9 +10,9 @@ class TimeBar {
         this.width = width; 
         this.trueWidth = width; 
         this.height = height;
-        this.demoTime = demoTime + 1000; // remove 1000 after testing 
+        this.demoTime = demoTime  // + 1000; // remove 1000 after testing 
         this.demoComplete = false; 
-        this.playTime = playTime + 2500; // remove 2500 after testing 
+        this.playTime = playTime //+ 2500; // remove 2500 after testing 
         this.shape = new Graphics(); 
         // this.shape.beginTextureFill(gradient('#10ca5a', '#14f56d', gridWidth, 100))
         // this.shape.beginFill(0x10ca5a);

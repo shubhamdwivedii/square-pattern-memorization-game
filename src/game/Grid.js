@@ -1,56 +1,61 @@
-import { Graphics } from 'pixi.js' 
+import { Graphics } from 'pixi.js'
 import Cell from './Cell';
-import TimeBar from './TimeBar'; 
-import NextLevel from './LevelGenerator'; 
+import TimeBar from './TimeBar';
+import NextLevel from './LevelGenerator';
 
-const MAX_ROWS = 6;  
+const MAX_ROWS = 6;
 // const MAX_COLS = 6; 
 // const MAX_COUNT = 18; 
 class Grid {
     constructor(posX, posY, gridWidth, gridHeight, round, isRandom, gameover, gameclear) {
         // this.rowSize = Math.floor(Math.random() * (MAX_ROWS-3)) + 4; 
         // this.colSize = Math.floor(Math.random() * (MAX_COLS-3)) + 4; 
-        this.width = gridWidth; 
-        this.height = gridHeight; 
+        this.width = gridWidth;
+        this.height = gridHeight;
         this.isRandom = isRandom
-        this.gameover = gameover; 
-        this.cleared = false; 
-        this.isover = false; 
-        this.gameclear = gameclear; 
-        this.strikes = 0; 
-        this.posX = posX; 
-        this.posY = posY; 
+        this.gameover = gameover;
+        this.cleared = false;
+        this.isover = false;
+        this.gameclear = gameclear;
+        this.strikes = 0;
+        this.posX = posX;
+        this.posY = posY;
         // this.gameover(); 
-        this.board = new Graphics(); 
+        this.board = new Graphics();
         this.board.beginFill(0x4b85f0, 0.1)
         this.board.drawRect(posX, posY, gridWidth, gridHeight)
-        this.board.endFill(); 
+        this.board.endFill();
 
-        this.cellSize = gridWidth/MAX_ROWS; 
+        this.cellSize = gridWidth / MAX_ROWS;
         this.initialize(round)
-        
-        
+
+
     }
 
     initialize(round) {
         const level = NextLevel(round, this.isRandom)
-        this.checks = level.checks; 
-        this.cleared = false; 
-        this.isover = false; 
+        this.checks = level.checks;
+        this.totalTurns = 0;
+        this.correctTurns = 0;
+        this.cleared = false;
+        this.isover = false;
         this.cells = []
-        this.timeBar = new TimeBar(this.posX + (this.width-(level.cols*this.cellSize))/2, this.posY + (this.height-(level.rows*this.cellSize))/2 - (this.cellSize/4), (level.cols*this.cellSize), this.cellSize/8, level.demo, level.time)
-        level.cells.forEach((row,j) => {
-            row.forEach((col,i) => {
-                const posX = this.posX + i*this.cellSize + (this.width-(level.cols*this.cellSize))/2;
-                const posY = this.posY + j*this.cellSize + (this.height-(level.rows*this.cellSize))/2;
-                this.cells.push(new Cell(posX, posY, this.cellSize, this.cellSize, `${i}-${j}`, (col===1),() => this.addStrike(), () => this.addCheck(), () => (this.isover || this.cleared)))
+        this.timeBar = new TimeBar(this.posX + (this.width - (level.cols * this.cellSize)) / 2, this.posY + (this.height - (level.rows * this.cellSize)) / 2 - (this.cellSize / 4), (level.cols * this.cellSize), this.cellSize / 8, level.demo, level.time)
+        level.cells.forEach((row, j) => {
+            row.forEach((col, i) => {
+                const posX = this.posX + i * this.cellSize + (this.width - (level.cols * this.cellSize)) / 2;
+                const posY = this.posY + j * this.cellSize + (this.height - (level.rows * this.cellSize)) / 2;
+                this.cells.push(new Cell(posX, posY, this.cellSize, this.cellSize, `${i}-${j}`, (col === 1), () => this.addStrike(), () => this.addCheck(), () => (this.isover || this.cleared)))
             })
         })
-        setTimeout(this.showActiveCells.bind(this), 1800)
+        setTimeout(this.showActiveCells.bind(this), 2000)
     }
 
     draw(stage) {
         // stage.addChild(this.board);
+
+        // start timer here; 
+        this.startTime = new Date();
         if (this.timeBar) {
             stage.addChild(this.timeBar.shape)
         }
@@ -64,7 +69,7 @@ class Grid {
         this.cells.forEach((cell, idx) => cell.unClickable(() => {
             stage.removeChild(cell.square)
             if (idx >= last) {
-                onComplete(); 
+                onComplete();
             }
         }))
         stage.removeChild(this.timeBar.shape)
@@ -73,7 +78,7 @@ class Grid {
     reset(stage, round) {
         console.log("Resetting")
         this.initialize(round);
-        this.draw(stage); 
+        this.draw(stage);
     }
 
     update(delta) {
@@ -84,24 +89,28 @@ class Grid {
 
     addCheck() {
         console.log("add Check", this.checks)
-        this.checks -= 1; 
+        this.checks -= 1;
+        this.totalTurns += 1;
+        this.correctTurns += 1;
         if (this.checks === 0) {
-            this.cleared = true; 
-            this.gameclear();
+            this.cleared = true;
+            const duration = (new Date() - this.startTime) / 1000;
+            this.gameclear(duration, this.correctTurns, this.totalTurns);
             return true;
         }
-        return false; 
+        return false;
 
     }
 
     isLastCheck() {
         console.log("IS LAST CHECK", this.check, this.check === 1)
-        return (this.check === 1) 
+        return (this.check === 1)
     }
 
     addStrike() {
         console.log("add Strike", this.strikes)
-        this.strikes += 1; 
+        this.strikes += 1;
+        this.totalTurns += 1;
         if (this.strikes > 2) {
             // this.isover = true; 
             // this.gameover(); 
@@ -110,7 +119,7 @@ class Grid {
 
     showActiveCells() {
         this.cells.forEach(cell => {
-            cell.showActive(); 
+            cell.showActive();
         })
         setTimeout(() => {
             this.timeBar.startDemo(() => {
@@ -118,32 +127,29 @@ class Grid {
                 this.hideActiveCells(); //.bind(this)
             })
         }, 380)
-       
+
         // setTimeout(this.hideActiveCells.bind(this), 4000)
     }
 
-
     hideActiveCells() {
-        console.log("HININININi")
         this.cells.forEach(cell => {
-            cell.hideActive(); 
+            cell.hideActive();
         })
 
         setTimeout(() => {
             this.timeBar.startPlay((current) => {
-                console.log("play start...")
                 if (this.timeBar === current) {
-                    console.log("Same Time Bar")
                     if (!this.cleared) {
-                        this.isover = true; 
-                        this.gameover(); 
+                        if (!this.isover) {
+                            this.isover = true;
+                            const duration = (new Date() - this.startTime) / 1000;
+                            this.gameover(duration, this.correctTurns, this.totalTurns);
+                        }
                     }
-                } else {
-                    console.log("dirrefernT")
                 }
             })
         }, 380)
-        
+
     }
 }
 
