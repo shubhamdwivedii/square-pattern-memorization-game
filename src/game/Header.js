@@ -2,6 +2,7 @@
 import Entity from './Entity'; 
 import gsap from 'gsap'; 
 import * as PIXI from 'pixi.js';
+import { isMute } from '../game'; 
 
 const SCALE_FACTOR = 0.5; 
 
@@ -9,33 +10,49 @@ const SCALE_FACTOR = 0.5;
 class Header extends Entity {
     constructor(resources,round, totalLevels, isMobile, onQuit, onMute) {
         super(); 
-        // this.posX = posX;
-        // this.posY = posY; 
-        // this.width = width; 
-        // this.height = height; 
-
         this.level = round; 
         this.currentLevel = this.getLevelText(this.level);
         this.totalLevels = this.getLevelText(totalLevels, true);
 
-        this.muteBtn = new PIXI.Sprite(resources.muteBtn.texture);
-        this.closeBtn = new PIXI.Sprite(resources.closeBtn.texture);
+        this.muteTexture = resources.muteBtn.texture; 
+        this.unmuteTexture = resources.unmuteBtn.texture; 
+        this.closeTexture = resources.closeBtn.texture; 
+
+        this.muteBtn = new PIXI.Sprite(this.muteTexture);
+        this.closeBtn = new PIXI.Sprite(this.closeTexture);
 
         this.closeBtn.anchor.set(0.5)
         
         this.muteBtn.anchor.set(0.5)
-
+        
         this.onQuit = onQuit; 
         this.onMute = onMute; 
         this.closeBtn.interactive = true; 
         this.muteBtn.interactive = true; 
         this.closeBtn.on('pointerdown', this.onQuit)
-        this.muteBtn.on('ponterdown', this.onMute)
-        this.closeBtn.on('touchstart', this.onQuit)
-        this.muteBtn.on('touchstart', this.onMute)
+        this.muteBtn.on('pointerdown', () => this.onMuteClick())
+        this.closeBtn.on('tap', this.onQuit)
+        this.muteBtn.on('tap', () => this.onMuteClick())
 
         this.reposition = this.reposition.bind(this);
 
+    }
+
+    onMuteClick() {
+        this.onMute(); 
+        if (isMute()) {
+            // this.muteBtn.texture = resources.unmuteBtn.texture; 
+            this.muteBtn.texture = this.unmuteTexture;
+        } else {
+            this.muteBtn.texture = this.muteTexture;
+        }
+
+        this.muteBtn.interactive = false; 
+
+        setTimeout(() => {
+            this.muteBtn.interactive = true; 
+        }, 200) 
+        
     }
 
     reposition() {
@@ -111,13 +128,11 @@ class Header extends Entity {
 
     update(delta) {
         if (this.screen.isMobile) {
-            console.log("IS MOBILE IN HEADER")
             this.muteBtn.x = this.x + this.w - this.w/24; 
             this.closeBtn.x = this.x + this.w/24; 
             this.closeBtn.y = this.y + (this.w/12) + this.closeBtn.height/2; 
             this.muteBtn.y = this.y + (this.w/12) + this.muteBtn.height/2; 
         } else {
-            console.log("Y HIGHT RES", this.y)
             this.muteBtn.x = this.x + this.w + this.w/4; 
             this.closeBtn.x = this.x - this.w/4; 
             this.closeBtn.y = this.y - this.closeBtn.height/2; 

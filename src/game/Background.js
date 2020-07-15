@@ -7,9 +7,7 @@ const OFFSET = 10;
 class Background {
     constructor(screenWidth, screenHeight) {
         this.cellWidth = screenHeight/TILES_PER_COL; 
-
         const tiles = getTriangle(screenWidth, screenHeight, this.cellWidth)
-        console.log("LLLL", tiles)
         // this.tiles = [new Tile(OFFSET, 0,this.cellWidth)]
         this.tiles = tiles.map(tile => new Tile(tile.x, tile.y, this.cellWidth - 4))
     }

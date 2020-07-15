@@ -1,5 +1,6 @@
 import { Graphics } from 'pixi.js';
 import Entity from './Entity'; 
+import { isMute } from '../game';
 import gsap from 'gsap';
 import * as PIXI from 'pixi.js';
 import sound from 'pixi-sound';
@@ -36,7 +37,7 @@ class Cell extends Entity {
             delay: (Math.random() * 0.2),
             paused: false,
             onComplete: () => {
-                console.log("Load Anim Complete")
+                console.log("Cell Load Animation Complete")
             }
         })
 
@@ -53,7 +54,6 @@ class Cell extends Entity {
         }
 
         this.square.touchstart = (e) => {
-            console.log("Touched")
             if (this.clickable && !isOver()) {
                 this.onClick(e)
             }
@@ -81,13 +81,13 @@ class Cell extends Entity {
                 const isLast = this.addCheck();
                 if (isLast) {
                     this.isLast = true;
-                    this.winSound.play();
+                    !isMute() && this.winSound.play();
                 } else {
-                    this.checkSound.play();
+                    !isMute() && this.checkSound.play();
                 }
             } else {
                 this.addStrike();
-                this.strikeSound.play(); 
+                !isMute && this.strikeSound.play(); 
             }
 
             this.clicked = true;
@@ -144,7 +144,7 @@ class Cell extends Entity {
         }
         this.square.clear()
         this.square.beginFill(color) //(0xBB81CD)
-        this.square.drawRoundedRect(x, y, w, h, this.r)
+        this.square.drawRoundedRect(x, y, w, h, r)
 
         if (this.active && this.isLast) {
             this.square.lineStyle(this.lineWidth, 0xFFFFFF, 0.7)
@@ -185,7 +185,6 @@ class Cell extends Entity {
     }
 
     flipAnimate(onFlipCb) {
-        console.log("FLip Aimating")
         this.animation.pause();
         this.animation = gsap.to(this, {
             x: ((this.posX + 4) + ((this.width - 8) / 2)),

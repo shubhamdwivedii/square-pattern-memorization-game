@@ -5,6 +5,7 @@ import GameOver from './GameOver';
 import Background from './Background'
 import closeImg from './assets/close.png';
 import muteImg from './assets/sound.png';
+import unMuteImg from './assets/mute.png'; 
 import Header from './Header';
 
 const game = new PIXI.Application({
@@ -22,14 +23,9 @@ let STATE = play;
 export const WIDTH = game.renderer.width;
 export const HEIGHT = game.renderer.height;
 export const isMobile = WIDTH / HEIGHT <= 1;
-console.log(HEIGHT, "<<<<", (HEIGHT - 650) >= 200)
-
 export const GRID_SCALE = 650; // (HEIGHT - 650 >= 300) ? 650 : HEIGHT - 300; 
-
-console.log("IS" + (isMobile ? " " : " NOT") + " MOBILE")
 const MIN_MARGIN = 150; 
 export const gridWidth = isMobile ? WIDTH - 30 : ((HEIGHT - GRID_SCALE >= (MIN_MARGIN*2)) ? GRID_SCALE : HEIGHT - (MIN_MARGIN*2));
-console.log("GRID WIDTH IS ", gridWidth)
 export const gridX = isMobile ? 15 : WIDTH/2 - gridWidth/2;
 export const gridY = HEIGHT/2 - (gridWidth/2);
 
@@ -37,6 +33,7 @@ export const gridY = HEIGHT/2 - (gridWidth/2);
 const MAX_ROUNDS = 12;
 
 let round = 1;
+let isMuted = false; 
 let totalDuration = 0;
 let totalCorrect = 0;
 let totalMoves = 0;
@@ -47,7 +44,6 @@ let totalMoves = 0;
 
 
 function onGameOver(duration, correctMoves, movesTotal) {
-    console.log("GameOver", duration, correctMoves, movesTotal)
     totalDuration += duration;
     totalCorrect += correctMoves;
     totalMoves += movesTotal;
@@ -56,13 +52,11 @@ function onGameOver(duration, correctMoves, movesTotal) {
         grid.clear(game.stage, () => {
             header.remove(game.stage)
             gameOver.draw(game.stage, round, totalDuration, totalCorrect / totalMoves)
-            console.log("Cleared")
         })
     }, 1500)
 }
 
 function gameclear(duration, correctMoves, movesTotal) {
-    console.log("GridClear", duration, correctMoves, movesTotal)
     totalDuration += duration;
     totalCorrect += correctMoves;
     totalMoves += movesTotal;
@@ -115,6 +109,7 @@ game.loader
     .add('bunny', 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/IaUrttj.png')
     .add('closeBtn', closeImg)
     .add('muteBtn', muteImg)
+    .add('unmuteBtn', unMuteImg)
     .load(setup)
 
 
@@ -176,6 +171,11 @@ function play(delta) {
 
 function onMute() {
     console.log("Muting Sounds")
+    isMuted = !isMuted; 
+}
+
+export function isMute() {
+    return isMuted;
 }
 
 function onQuit() {

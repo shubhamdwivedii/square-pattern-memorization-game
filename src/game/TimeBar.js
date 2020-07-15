@@ -22,7 +22,7 @@ class TimeBar extends Entity {
             duration: 1.5, 
             delay: (Math.random() * 0.2),
             onComplete: () => {
-                console.log("TimeBar anim complete")
+                console.log("TimeBar loading complete")
             }
         })
 
@@ -49,9 +49,8 @@ class TimeBar extends Entity {
     }
     
     startDemo(onComplete) {
-        console.log("Starting dEMO")
         this.startTimer(this.demoTime, () => {
-            console.log("DEMO TIME OUT");
+            console.log("Demo TimeOut");
             onComplete(); 
         }); 
     }
@@ -60,7 +59,7 @@ class TimeBar extends Entity {
         this.w = this.trueWidth; 
         this.demoComplete = true; 
         this.startTimer(this.playTime, () => {
-            console.log("PLAY TIME OUT")
+            console.log("Play TimeOut")
             onComplete(this); 
         })
     }

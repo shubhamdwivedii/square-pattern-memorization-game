@@ -42,19 +42,19 @@ class Entity {
     }
 
     reposition() {
-        console.log("Entity Reposition")
+        // console.log("Entity Reposition")
     }
 
     draw(stage) {
-        console.log("Drawing Entity")
+        // console.log("Drawing Entity")
     }
 
     remove(stage) {
-        console.log("Removing Entity")
+        // console.log("Removing Entity")
     }
 
     update(delta) {
-        console.log("Updating Entity")
+        // console.log("Updating Entity")
     }
 }
 

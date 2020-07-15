@@ -34,14 +34,12 @@ class Stars extends Entity {
     }
 
     reposition() {
-        console.log("STARS REPOSITION")
         this.x = this.screen.w/2; 
         this.y = this.grid.y;
         this.scale = this.grid.s; 
     }
 
     draw(stage, round) {
-        console.log("Drawing StarrrrrrrrrrrrrrrrrrrrR", this.y)
         this.round = round; 
         this.starOne.texture = round >= 4 ? this.starTex : this.altTex;
         this.starTwo.texture = round >= 8 ? this.starTex : this.altTex;
@@ -62,9 +60,6 @@ class Stars extends Entity {
             delay: 0.4, 
             duration: 1.5, 
             paused: false,
-            onComplete: () => {
-                console.log("StarAnim Done")
-            }
         })
     }
 
@@ -77,7 +72,6 @@ class Stars extends Entity {
             duration: 1.5, 
             paused: false,
             onComplete: () => {
-                console.log("StarAnim Done")
                 stage.removeChild(this.starOne)
                 stage.removeChild(this.starTwo)
                 stage.removeChild(this.starThree)

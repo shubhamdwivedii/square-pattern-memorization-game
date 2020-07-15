@@ -3,15 +3,21 @@ import Entity from '../Entity';
 
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap'; 
+import replayImg from '../assets/replay.png';
 
 const FONT_SIZE = 32; 
+const ICON_SCALE = 0.12; 
 
 class PlayAgain extends Entity {
     constructor(onRestart) {
         super()
         this.button = new Graphics(); 
 
-        this.text = new PIXI.Text("PLAY AGAIN");
+        this.text = new PIXI.Text("PLAY AGAIN ");
+
+        const replayTexure = PIXI.Texture.from(replayImg)
+
+        this.replayIcon = new PIXI.Sprite(replayTexure)
 
         this.button.interactive = true; 
         this.button.click = (e) => {
@@ -33,7 +39,6 @@ class PlayAgain extends Entity {
         this.h = this.grid.w/12; 
         this.r = 0; 
         this.scale = this.grid.s; 
-    
     }
 
     getFontStyle(scale) {
@@ -62,9 +67,14 @@ class PlayAgain extends Entity {
     }
 
     draw(stage) {
-        this.text = new PIXI.Text("PLAY AGAIN", this.getFontStyle(this.scale));
+        this.text = new PIXI.Text("PLAY AGAIN ", this.getFontStyle(this.scale));
+
+        this.replayIcon.scale.set(ICON_SCALE * this.scale)
+        this.replayIcon.anchor.set(0.5);
+
         stage.addChild(this.button)
         stage.addChild(this.text)
+        stage.addChild(this.replayIcon)
         this.animation = gsap.from(this, {
             y: 2000, 
             ease: 'power2', 
@@ -86,6 +96,7 @@ class PlayAgain extends Entity {
             onComplete: () => {
                 stage.removeChild(this.button)
                 stage.removeChild(this.text)
+                stage.removeChild(this.replayIcon)
                 this.y = posY;
             }
         })
@@ -98,6 +109,9 @@ class PlayAgain extends Entity {
         this.button.beginFill(0xffffff);
         this.button.drawRect(this.x, this.y, this.w, this.h)
         this.button.endFill(); 
+
+        this.replayIcon.x = this.text.x + this.text.width + this.replayIcon.width/2; 
+        this.replayIcon.y = this.text.y + this.replayIcon.height/2 + this.replayIcon.height/12; 
     }
 }
 

@@ -48,6 +48,8 @@ class Grid {
                 this.cells.push(new Cell(posX, posY, this.cellSize, this.cellSize, `${i}-${j}`, (col === 1), () => this.addStrike(), () => this.addCheck(), () => (this.isover || this.cleared)))
             })
         })
+
+        // SSSSS Add check if every tile is loaded or not
         setTimeout(this.showActiveCells.bind(this), 2000)
     }
 
@@ -76,7 +78,6 @@ class Grid {
     }
 
     reset(stage, round) {
-        console.log("Resetting")
         this.initialize(round);
         this.draw(stage);
     }
@@ -88,7 +89,6 @@ class Grid {
     }
 
     addCheck() {
-        console.log("add Check", this.checks)
         this.checks -= 1;
         this.totalTurns += 1;
         this.correctTurns += 1;
@@ -103,12 +103,10 @@ class Grid {
     }
 
     isLastCheck() {
-        console.log("IS LAST CHECK", this.check, this.check === 1)
         return (this.check === 1)
     }
 
     addStrike() {
-        console.log("add Strike", this.strikes)
         this.strikes += 1;
         this.totalTurns += 1;
         if (this.strikes > 2) {
@@ -123,7 +121,6 @@ class Grid {
         })
         setTimeout(() => {
             this.timeBar.startDemo(() => {
-                console.log("hiding ...")
                 this.hideActiveCells(); //.bind(this)
             })
         }, 380)
