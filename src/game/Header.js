@@ -40,7 +40,7 @@ class Header extends Entity {
 
     reposition() {
         this.x = this.grid.x; 
-        this.y = this.screen.isMobile ? 0 : this.grid.y; 
+        this.y = this.screen.isMobile ? 0 : this.grid.y/2; 
         this.w = this.grid.w; 
         this.scale = this.grid.s; 
     }
@@ -111,15 +111,17 @@ class Header extends Entity {
 
     update(delta) {
         if (this.screen.isMobile) {
+            console.log("IS MOBILE IN HEADER")
             this.muteBtn.x = this.x + this.w - this.w/24; 
             this.closeBtn.x = this.x + this.w/24; 
             this.closeBtn.y = this.y + (this.w/12) + this.closeBtn.height/2; 
             this.muteBtn.y = this.y + (this.w/12) + this.muteBtn.height/2; 
         } else {
+            console.log("Y HIGHT RES", this.y)
             this.muteBtn.x = this.x + this.w + this.w/4; 
             this.closeBtn.x = this.x - this.w/4; 
-            this.closeBtn.y = this.y - (this.w/4) + this.closeBtn.height/2; 
-            this.muteBtn.y = this.y - (this.w/4) + this.muteBtn.height/2; 
+            this.closeBtn.y = this.y - this.closeBtn.height/2; 
+            this.muteBtn.y = this.y - this.muteBtn.height/2; 
         }
 
         this.currentLevel.x = this.x + (this.w/2) - (this.currentLevel.width);
