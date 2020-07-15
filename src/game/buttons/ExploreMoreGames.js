@@ -3,21 +3,16 @@ import Entity from '../Entity';
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap'; 
 
-const FONT_SIZE = 24; 
+const FONT_SIZE = 32; 
+const RADIUS = 15; 
 
 class ExploreMoreButton extends Entity {
-    constructor(posX, posY, width, height) {
-        super(posX, posY, width, height, 15, 0)
+    constructor() {
+        super()
         this.button = new Graphics(); 
-        const fontStyle = new PIXI.TextStyle({
-            fontFamily: "Helvetica", 
-            fontWeight: "bold", 
-            fontSize: FONT_SIZE, 
-            align: "center", 
-            // fill: "#4b85f0"
-        });
+       
 
-        this.text = new PIXI.Text("EXPLORE MORE GAMES", fontStyle)
+        this.text = new PIXI.Text("EXPLORE MORE GAMES")
 
         this.button.interactive = true; 
         this.button.click = (e) => {
@@ -26,8 +21,32 @@ class ExploreMoreButton extends Entity {
         this.button.touchstart = (e) => {
             this.onClick(e)
         }
+        
+        this.reposition = this.reposition.bind(this)
     }
 
+
+    reposition() {
+        this.x = this.grid.x + this.grid.w/20; 
+        this.y = this.grid.y + ((this.grid.w/3)*2) 
+        this.w = this.grid.w - (this.grid.w/20)*2; 
+        this.h = this.grid.w/6 - this.grid.w/48;
+        this.scale = this.grid.s; 
+        this.r = RADIUS * this.scale;
+
+
+    }
+
+    getFontStyle(scale) {
+        const fontStyle = new PIXI.TextStyle({
+            fontFamily: "Helvetica", 
+            fontWeight: "bold", 
+            fontSize: FONT_SIZE * scale, 
+            align: "center", 
+            // fill: "#4b85f0"
+        }); 
+        return fontStyle; 
+    }
 
     onClick(event) {
         this.animation && this.animation.pause(); 
@@ -43,6 +62,7 @@ class ExploreMoreButton extends Entity {
 
 
     draw(stage) {
+        this.text = new PIXI.Text("EXPLORE MORE GAMES", this.getFontStyle(this.scale))
         stage.addChild(this.button)
         stage.addChild(this.text)
 

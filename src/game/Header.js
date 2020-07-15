@@ -1,12 +1,17 @@
 // import { Graphics } from 'pixi.js';
+import Entity from './Entity'; 
 import gsap from 'gsap'; 
 import * as PIXI from 'pixi.js';
 
-class Header {
-    constructor(posX, posY, width, resources,round, totalLevels, isMobile, onQuit, onMute) {
-        this.posX = posX;
-        this.posY = posY; 
-        this.width = width; 
+const SCALE_FACTOR = 0.5; 
+
+
+class Header extends Entity {
+    constructor(resources,round, totalLevels, isMobile, onQuit, onMute) {
+        super(); 
+        // this.posX = posX;
+        // this.posY = posY; 
+        // this.width = width; 
         // this.height = height; 
 
         this.level = round; 
@@ -16,11 +21,8 @@ class Header {
         this.muteBtn = new PIXI.Sprite(resources.muteBtn.texture);
         this.closeBtn = new PIXI.Sprite(resources.closeBtn.texture);
 
-        this.closeBtn.scale.x = 0.5 
-        this.closeBtn.scale.y = 0.5    
         this.closeBtn.anchor.set(0.5)
-        this.muteBtn.scale.x = 0.5 
-        this.muteBtn.scale.y = 0.5   
+        
         this.muteBtn.anchor.set(0.5)
 
         this.onQuit = onQuit; 
@@ -32,14 +34,15 @@ class Header {
         this.closeBtn.on('touchstart', this.onQuit)
         this.muteBtn.on('touchstart', this.onMute)
 
-        if (isMobile) {
-            this.muteBtn.x -= width/8;
-            this.closeBtn.x += width/8;
-        } else {
-            this.muteBtn.x += width/8; 
-            this.closeBtn.x -= width/8;
-        }
+        this.reposition = this.reposition.bind(this);
 
+    }
+
+    reposition() {
+        this.x = this.grid.x; 
+        this.y = this.screen.isMobile ? 0 : this.grid.y; 
+        this.w = this.grid.w; 
+        this.scale = this.grid.s; 
     }
 
 
@@ -49,7 +52,7 @@ class Header {
         const fontStyleLg = new PIXI.TextStyle({
             fontFamily: "Helvetica",
             fontWeight: "bold",
-            fontSize: !!total ? 24 : 42, 
+            fontSize: (!!total ? 32 : 64) * this.scale, 
             fill: "#e5325f",
             align: "center",
         });
@@ -65,9 +68,9 @@ class Header {
 
     remove(stage) {
         // this.animation && this.animation.pause(); 
-        const posY = this.posY; 
+        const posY = this.y; 
         this.animation = gsap.to(this, {
-            posY: -2000, 
+            y: -100, 
             ease: 'power2', 
             delay: 0.4, 
             duration: 1, 
@@ -77,16 +80,23 @@ class Header {
                 stage.removeChild(this.muteBtn)
                 stage.removeChild(this.currentLevel)
                 stage.removeChild(this.totalLevels)
-                this.posY = posY; 
+                this.y = posY; 
             }
         })
         // this.animation.resume();
     } 
 
 
-    draw(stage) {
+    draw(stage, round) {
+        this.level = round; 
+        this.closeBtn.scale.x = SCALE_FACTOR * this.scale;
+        this.closeBtn.scale.y = SCALE_FACTOR * this.scale;    
+        this.muteBtn.scale.x = SCALE_FACTOR * this.scale; 
+        this.muteBtn.scale.y = SCALE_FACTOR * this.scale;   
+
+        this.currentLevel.text = this.level <= 9 ? `0${this.level}` : `${this.level}`; 
         this.animation = gsap.from(this, {
-            posY: -2000, 
+            y: -2000, 
             ease: 'power2', 
             delay: 0.2, 
             duration:1, 
@@ -100,17 +110,22 @@ class Header {
     }
 
     update(delta) {
-        this.closeBtn.x = this.posX; 
-        this.closeBtn.y = this.posY - (this.width/8) + this.closeBtn.height/2; 
-        this.muteBtn.x = this.posX + this.width; 
-        this.muteBtn.y = this.posY - (this.width/8) + this.muteBtn.height/2; 
-        
+        if (this.screen.isMobile) {
+            this.muteBtn.x = this.x + this.w - this.w/24; 
+            this.closeBtn.x = this.x + this.w/24; 
+            this.closeBtn.y = this.y + (this.w/12) + this.closeBtn.height/2; 
+            this.muteBtn.y = this.y + (this.w/12) + this.muteBtn.height/2; 
+        } else {
+            this.muteBtn.x = this.x + this.w + this.w/4; 
+            this.closeBtn.x = this.x - this.w/4; 
+            this.closeBtn.y = this.y - (this.w/4) + this.closeBtn.height/2; 
+            this.muteBtn.y = this.y - (this.w/4) + this.muteBtn.height/2; 
+        }
 
-
-        this.currentLevel.x = this.posX + (this.width/2) - (this.currentLevel.width);
-        this.currentLevel.y = this.posY - (this.width/6); 
-        this.totalLevels.x = this.posX + (this.width/2); 
-        this.totalLevels.y = this.posY - (this.width/6) + (this.totalLevels.height/2);
+        this.currentLevel.x = this.x + (this.w/2) - (this.currentLevel.width);
+        this.currentLevel.y = this.closeBtn.y - this.currentLevel.height/2; 
+        this.totalLevels.x = this.x + (this.w/2); 
+        this.totalLevels.y = this.closeBtn.y - this.currentLevel.height/2 + (this.totalLevels.height * 3/4);
     }
 
 

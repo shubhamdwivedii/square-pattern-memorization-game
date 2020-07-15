@@ -1,27 +1,22 @@
 import { Graphics } from 'pixi.js';
+import Entity from './Entity'; 
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap';
 
+const RADIUS_FACTOR = 16; 
 
-class TimeBar {
+class TimeBar extends Entity {
     constructor(posX, posY, width, height, demoTime, playTime) {
-        this.posX = posX; 
-        this.posY = posY; 
-        this.width = width; 
+        super(posX, posY, width, height)
         this.trueWidth = width; 
-        this.height = height;
         this.demoTime = demoTime  // + 1000; // remove 1000 after testing 
         this.demoComplete = false; 
         this.playTime = playTime //+ 2500; // remove 2500 after testing 
         this.shape = new Graphics(); 
-        // this.shape.beginTextureFill(gradient('#10ca5a', '#14f56d', gridWidth, 100))
-        // this.shape.beginFill(0x10ca5a);
-        // this.shape.drawRoundedRect(posX, posY, width, height, 16)
-        // this.shape.endFill(); 
-
+    
         this.animation = gsap.from(this, {
-            posY: Math.round(Math.random() * 600) - 1200, 
-            width: 0, 
+            y: Math.round(Math.random() * 600) - 1200, 
+            w: 0, 
             trueWidth: 0,
             ease: 'elastic', 
             duration: 1.5, 
@@ -30,18 +25,25 @@ class TimeBar {
                 console.log("TimeBar anim complete")
             }
         })
+
+        this.reposition = this.reposition.bind(this)
+    }
+
+    reposition() {
+        this.scale = this.grid.s; 
+        this.r = RADIUS_FACTOR * this.scale; 
     }
     
     draw() {
         this.shape.clear();
         if (this.demoComplete) {
             this.shape.beginFill(0x10ca5a);
-            this.shape.drawRoundedRect(this.posX, this.posY, this.width, this.height, 16)
+            this.shape.drawRoundedRect(this.x, this.y , this.w, this.h, this.r)
         } else {
             this.shape.beginFill(0x10ca5a);
-            this.shape.drawRoundedRect(this.posX, this.posY, this.trueWidth, this.height, 16)
+            this.shape.drawRoundedRect(this.x, this.y, this.trueWidth, this.h, this.r)
             this.shape.beginFill(0xfcd21c)
-            this.shape.drawRoundedRect(this.posX, this.posY, this.width, this.height, 16)
+            this.shape.drawRoundedRect(this.x, this.y, this.w, this.h, this.r)
         }
         this.shape.endFill(); 
     }
@@ -55,7 +57,7 @@ class TimeBar {
     }
 
     startPlay(onComplete) {
-        this.width = this.trueWidth; 
+        this.w = this.trueWidth; 
         this.demoComplete = true; 
         this.startTimer(this.playTime, () => {
             console.log("PLAY TIME OUT")
@@ -64,13 +66,6 @@ class TimeBar {
     }
 
     update(delta) {
-        // console.log("updating", this.width)
-        // if (this.width <= 0) {
-        //     // console.log("times up")
-        // } else {
-        //     this.width = this.width - (delta*1) 
-        // }
-    
         this.draw()
     }
 
@@ -78,7 +73,7 @@ class TimeBar {
     startTimer(duration, onTimeout) {
         this.animation && this.animation.pause(); 
         this.animation = gsap.to(this, {
-            width: 0,
+            w: 0,
             ease: 'linear',
             delay: 0.1, 
             duration: duration/1000, 

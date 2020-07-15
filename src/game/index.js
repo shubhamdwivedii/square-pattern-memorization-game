@@ -21,11 +21,17 @@ game.renderer.resize(window.innerWidth, window.innerHeight)
 let STATE = play;
 export const WIDTH = game.renderer.width;
 export const HEIGHT = game.renderer.height;
-
 export const isMobile = WIDTH / HEIGHT <= 1;
-export const gridWidth = isMobile ? WIDTH - 50 : WIDTH / 3;
-export const gridX = isMobile ? 25 : WIDTH / 3;
-export const gridY = HEIGHT / 2 - (gridWidth / 2) + 50;
+console.log(HEIGHT, "<<<<", (HEIGHT - 650) >= 200)
+
+export const GRID_SCALE = 650; // (HEIGHT - 650 >= 300) ? 650 : HEIGHT - 300; 
+
+console.log("IS" + (isMobile ? " " : " NOT") + " MOBILE")
+const MIN_MARGIN = 150; 
+export const gridWidth = isMobile ? WIDTH - 30 : ((HEIGHT - GRID_SCALE >= (MIN_MARGIN*2)) ? GRID_SCALE : HEIGHT - (MIN_MARGIN*2));
+console.log("GRID WIDTH IS ", gridWidth)
+export const gridX = isMobile ? 15 : WIDTH/2 - gridWidth/2;
+export const gridY = HEIGHT/2 - (gridWidth/2);
 
 
 const MAX_ROUNDS = 12;
@@ -117,7 +123,7 @@ function setup(loader, resources) {
     // bunny = new PIXI.Sprite.from('./assets/bunny.png'); //
     bunny = new PIXI.Sprite(resources.bunny.texture);
 
-    header = new Header(gridX, gridY, gridWidth, resources, round, MAX_ROUNDS, isMobile, onQuit, onMute)
+    header = new Header(resources, round, MAX_ROUNDS, isMobile, onQuit, onMute)
     // STATE = play; 
 
 
@@ -128,7 +134,7 @@ function setup(loader, resources) {
     bunny.anchor.y = 0.5;
 
     background.draw(game.stage)
-    header.draw(game.stage)
+    header.draw(game.stage, round)
     grid.draw(game.stage)
 
     game.stage.addChild(bunny);
@@ -146,7 +152,7 @@ function restart() {
     totalDuration = 0;
     totalCorrect = 0;
     totalMoves = 0;
-    header.draw(game.stage) 
+    header.draw(game.stage, round) 
     gameOver.remove(game.stage)
     setTimeout(() => {
         grid.reset(game.stage, round);

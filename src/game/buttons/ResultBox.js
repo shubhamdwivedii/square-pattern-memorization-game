@@ -4,42 +4,66 @@ import * as PIXI from 'pixi.js';
 import gsap from 'gsap'; 
 
 
-const FONT_SIZE = 32; 
+const FONT_SIZE = 42; 
+const LABEL_SCALE = 2/3; 
+const RELATIVE_SCALE = 5/4.5; 
+const RADIUS = 40; 
 
 class ResultBox extends Entity {
-    constructor(posX, posY, width, height) {
-        super(posX, posY, width, height, 30, 0)
+    constructor() {
+        super()
         this.bgBox = new Graphics(); 
 
         this.timeTaken = 234 // minutes
         this.ratio = 15/18 // correct/total 
 
+        this.timeTakenLabel = new PIXI.Text("Time Taken")
+        this.accuracyLabel = new PIXI.Text("Accuracy")
+
+
+        this.timeTakenText = new PIXI.Text("--")
+        this.accuracyText = new PIXI.Text("--")
+        this.reposition = this.reposition.bind(this);
+    }
+
+    reposition() {
+        this.x = this.grid.x + (this.grid.w/6);
+        this.y = this.grid.y + (this.grid.w/3);
+        this.w = 4*(this.grid.w/6);
+        this.h = (this.grid.w/4.5);
+        this.scale = this.screen.isMobile ? this.grid.s : this.grid.s * RELATIVE_SCALE; 
+        this.r = RADIUS * this.scale; 
+        
+       
+    }
+
+    getLabelFontStyle(scale) {
         const labelFontStyle = new PIXI.TextStyle({
             fontFamily: "Helvetica", 
             fontWeight: "bold", 
-            fontSize: FONT_SIZE * 3/4,
+            fontSize: FONT_SIZE * LABEL_SCALE * scale,
             align: "center",  
             fill: "#727575"
         })
+        return labelFontStyle
+    }
 
+    getMetricFontStyle(scale) {
         const metricFontStyle = new PIXI.TextStyle({
             fontFamily: "Helvetica", 
             fontWeight: "bold", 
-            fontSize: FONT_SIZE, 
+            fontSize: FONT_SIZE * scale, 
             align: "center", 
         })
-
-        this.timeTakenLabel = new PIXI.Text("Time Taken", labelFontStyle)
-        this.accuracyLabel = new PIXI.Text("Accuracy", labelFontStyle)
-
-
-        this.timeTakenText = new PIXI.Text("--", metricFontStyle)
-        this.accuracyText = new PIXI.Text("--", metricFontStyle)
+        return metricFontStyle; 
     }
 
 
     draw(stage, timeTaken, ratio) {
-
+        this.timeTakenLabel = new PIXI.Text("Time Taken", this.getLabelFontStyle(this.scale))
+        this.accuracyLabel = new PIXI.Text("Accuracy", this.getLabelFontStyle(this.scale))
+        this.timeTakenText = new PIXI.Text("--", this.getMetricFontStyle(this.scale))
+        this.accuracyText = new PIXI.Text("--", this.getMetricFontStyle(this.scale))
         this.timeTakenText.text = `${Math.round(timeTaken/60)}:${Math.round(timeTaken%60)}`
         const accuracy = Math.round(((ratio*100) + Number.EPSILON) * 100) /100
         

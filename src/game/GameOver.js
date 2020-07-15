@@ -14,13 +14,13 @@ class GameOver {
         this.screenWidth = screenWidth; 
         this.screenHeight = screenHeight; 
         this.round = round; 
-        this.stars = new Stars(posX, posY, width, screenWidth, screenHeight, round)
+        this.stars = new Stars(round)
     
-        this.exploreMore = new ExploreMoreButton(this.posX, this.posY + (this.width/3)*2, this.width, 2*(this.width/12) - (this.width/48), 15)
+        this.exploreMore = new ExploreMoreButton()
 
-        this.resultBox = new ResultBox(this.posX + (this.width/6), this.posY + this.width/3, 4*(this.width/6), 2*(this.width/8))
+        this.resultBox = new ResultBox()
 
-        this.playAgainBtn = new PlayAgain(this.posX + this.width/6, this.exploreMore.y + this.exploreMore.h + this.exploreMore.h/3, this.resultBox.w, this.exploreMore.h - this.exploreMore.h/3, () => restartGame())
+        this.playAgainBtn = new PlayAgain(() => restartGame())
     }
 
     draw(stage, round, timeTaken, ratio) {

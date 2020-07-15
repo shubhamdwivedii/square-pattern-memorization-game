@@ -4,21 +4,14 @@ import Entity from '../Entity';
 import * as PIXI from 'pixi.js';
 import gsap from 'gsap'; 
 
-const FONT_SIZE = 24; 
+const FONT_SIZE = 32; 
 
 class PlayAgain extends Entity {
-    constructor(posX, posY, width, height, onRestart) {
-        super(posX, posY, width, height, 0, 0)
+    constructor(onRestart) {
+        super()
         this.button = new Graphics(); 
-        const fontStyle = new PIXI.TextStyle({
-            fontFamily: "Helvetica", 
-            fontWeight: "bold", 
-            fontSize: FONT_SIZE, 
-            align: "center", 
-            fill: "#4b85f0"
-        });
 
-        this.text = new PIXI.Text("PLAY AGAIN", fontStyle);
+        this.text = new PIXI.Text("PLAY AGAIN");
 
         this.button.interactive = true; 
         this.button.click = (e) => {
@@ -29,8 +22,30 @@ class PlayAgain extends Entity {
         }
 
         this.onRestart = onRestart;
+
+        this.reposition = this.reposition.bind(this)
     }
 
+    reposition() {
+        this.x = this.grid.x + this.grid.w/4;
+        this.y = this.grid.y + this.grid.w - (this.grid.w/8)
+        this.w = this.grid.w/2;
+        this.h = this.grid.w/12; 
+        this.r = 0; 
+        this.scale = this.grid.s; 
+    
+    }
+
+    getFontStyle(scale) {
+        const fontStyle = new PIXI.TextStyle({
+            fontFamily: "Helvetica", 
+            fontWeight: "bold", 
+            fontSize: FONT_SIZE * scale, 
+            align: "center", 
+            fill: "#4b85f0"
+        });
+        return fontStyle; 
+    }
 
     onClick(event) {
         // this.animation && this.animation.pause(); 
@@ -47,9 +62,9 @@ class PlayAgain extends Entity {
     }
 
     draw(stage) {
+        this.text = new PIXI.Text("PLAY AGAIN", this.getFontStyle(this.scale));
         stage.addChild(this.button)
         stage.addChild(this.text)
-
         this.animation = gsap.from(this, {
             y: 2000, 
             ease: 'power2', 

@@ -1,9 +1,11 @@
 import {
     HEIGHT, 
     WIDTH, 
+    GRID_SCALE, 
     gridWidth, 
     gridX, 
     gridY, 
+    isMobile, 
 } from '../game'
 
 class Entity {
@@ -25,15 +27,22 @@ class Entity {
             origin: {
                 x: WIDTH/2,
                 y: HEIGHT/2,
-            }  
+            },
+            isMobile: isMobile,   
         }
         this.grid = {
             x: gridX, 
             y: gridY, 
             w: gridWidth, 
+            s: isMobile ? gridWidth/(GRID_SCALE - GRID_SCALE/6) : gridWidth/GRID_SCALE, 
         }
 
         this.animation = undefined; 
+        this.reposition(); 
+    }
+
+    reposition() {
+        console.log("Entity Reposition")
     }
 
     draw(stage) {
