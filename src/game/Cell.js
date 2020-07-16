@@ -2,17 +2,14 @@ import { Graphics } from 'pixi.js';
 import Entity from './Entity'; 
 import { isMute } from '../game';
 import gsap from 'gsap';
-import * as PIXI from 'pixi.js';
 import sound from 'pixi-sound';
-import strikeSnd from './assets/strike.mp3'; 
-import checkSnd from './assets/check.mp3'; 
-import winSnd from './assets/win.mp3';
+
 
 const RADIUS_FACTOR = 10; 
 const LINE_WIDTH = 8; 
 
 class Cell extends Entity {
-    constructor(posX, posY, width, height, id, active, addStrike, addCheck, isOver) {
+    constructor(posX, posY, width, height, resources, active, addStrike, addCheck, isOver) {
         super(posX + 4, posY + 4, width - 8, height - 8, 0, 0)
         this.square = new Graphics();
         this.time = 2.0;
@@ -25,25 +22,12 @@ class Cell extends Entity {
         this.posY = posY;
         this.width = width;
         this.height = height;
-        // this.dimensions = { x: this.posX + 4, y: this.posY + 4, h: this.height - 8, w: this.width - 8, r: 10 }
+       
+      
 
-        this.animation = gsap.from(this, {
-            x: posX + 4 + ((width - 8) / 2),
-            y: Math.round(Math.random() * 600) - 1200, //posY + 4 + ((height -8)/2), 
-            w: 10,//width - 8, 
-            h: 10, //height - 8,
-            ease: 'elastic',
-            duration: 1.5,
-            delay: (Math.random() * 0.2),
-            paused: false,
-            onComplete: () => {
-                console.log("Cell Load Animation Complete")
-            }
-        })
-
-        this.strikeSound = sound.Sound.from(strikeSnd);
-        this.checkSound = sound.Sound.from(checkSnd);
-        this.winSound = sound.Sound.from(winSnd);
+        this.strikeSound = sound.Sound.from(resources.strikeSnd.sound);
+        this.checkSound = sound.Sound.from(resources.checkSnd.sound);
+        this.winSound = sound.Sound.from(resources.clearSnd.sound);
 
         this.square.interactive = true;
         this.square.buttonMode = true;
@@ -71,59 +55,24 @@ class Cell extends Entity {
         this.lineWidth = LINE_WIDTH * this.scale; 
     }
 
-    update(delta) {
-        this.draw();
-    }
-
-    onClick(event) {
-        if (!this.clicked) {
-            if (this.active) {
-                const isLast = this.addCheck();
-                if (isLast) {
-                    this.isLast = true;
-                    !isMute() && this.winSound.play();
-                } else {
-                    !isMute() && this.checkSound.play();
-                }
-            } else {
-                this.addStrike();
-                !isMute && this.strikeSound.play(); 
+    draw(stage) {
+        this.animation = gsap.from(this, {
+            x: this.posX + 4 + ((this.width - 8) / 2),
+            y: Math.round(Math.random() * 600) - 1200, 
+            w: 10,//width - 8, 
+            h: 10, //height - 8,
+            ease: 'elastic',
+            duration: 1.5,
+            delay: (Math.random() * 0.2),
+            paused: false,
+            onComplete: () => {
+                console.log("Cell Load Animation Complete")
             }
-
-            this.clicked = true;
-            this.popAnimate(() => {
-                if (!this.active) {
-                    this.flipAnimate(() => {
-                        this.clicked = false;
-                    })
-                }
-            })
-        }
-    }
-
-    showActive() {
-        this.flipAnimate(() => {
-            // this.clickable = false;
-            this.hidden = false;
         })
+        stage.addChild(this.square)
     }
 
-    hideActive() {
-        this.flipAnimate(() => {
-            this.clickable = true;
-            this.hidden = true;
-        })
-    }
-
-    unClickable(onComplete) {
-        this.flipAnimate(() => {
-            this.clickable = false;
-            this.hidden = true;
-            onComplete();
-        })
-    }
-
-    draw() {
+    update(delta) {
         const { x, y, h, w, r } = this;
 
         let color = 0x4b85f0 //0xfcd21c
@@ -162,12 +111,60 @@ class Cell extends Entity {
         }
 
         this.square.endFill()
-
-        // this.square.drawRoundedRect(this.posX+4, this.posY+4, this.width-8, this.height-8)
     }
 
+    onClick(event) {
+        if (!this.clicked) {
+            if (this.active) {
+                const isLast = this.addCheck();
+                if (isLast) {
+                    this.isLast = true;
+                    !isMute() && this.winSound.play();
+                } else {
+                    !isMute() && this.checkSound.play();
+                }
+            } else {
+                this.addStrike();
+                !isMute() && this.strikeSound.play(); 
+            }
+
+            this.clicked = true;
+            this.popAnimate(() => {
+                if (!this.active) {
+                    this.flipAnimate(() => {
+                        this.clicked = false;
+                    })
+                }
+            })
+        }
+    }
+
+    showActive() {
+        this.flipAnimate(() => {
+            // this.clickable = false;
+            this.hidden = false;
+        })
+    }
+
+    hideActive() {
+        this.flipAnimate(() => {
+            this.clickable = true;
+            this.hidden = true;
+        })
+    }
+
+    unClickable(onComplete) {
+        this.flipAnimate(() => {
+            this.clickable = false;
+            this.hidden = true;
+            onComplete();
+        })
+    }
+
+   
+
     popAnimate(onPopCb) {
-        this.animation.pause();
+        // this.animation.pause();
         this.animation = gsap.from(this, {
             x: this.posX + 4 + ((this.width - 8) / 2),
             y: this.posY + 4 + ((this.height - 8) / 2),
@@ -176,16 +173,16 @@ class Cell extends Entity {
             ease: 'elastic',
             duration: 1,
             delay: 0,
-            paused: true,
+            // paused: true,
             onComplete: () => {
                 setTimeout(onPopCb, 200)
             }
         })
-        this.animation.resume();
+        // this.animation.resume();
     }
 
     flipAnimate(onFlipCb) {
-        this.animation.pause();
+        // this.animation.pause();
         this.animation = gsap.to(this, {
             x: ((this.posX + 4) + ((this.width - 8) / 2)),
             w: 0,//width - 8, 
@@ -204,7 +201,20 @@ class Cell extends Entity {
                 })
             }
         })
-        this.animation.resume();
+        // this.animation.resume();
+    }
+
+    moveBy(x,y, onMoveCb) {
+        this.animation = gsap.to(this, {
+            x: this.x + x, 
+            y: this.y + y, 
+            ease: 'power2', 
+            duration: 0.5, 
+            delay: 0.2, 
+            onComplete: () => {
+                onMoveCb && onMoveCb(); 
+            }
+        })
     }
 }
 

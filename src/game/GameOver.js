@@ -1,25 +1,14 @@
-import { Graphics } from 'pixi.js';
-import * as PIXI from 'pixi.js';
-import gsap from 'gsap'; 
 import Stars from './Stars'; 
 import ExploreMoreButton from './buttons/ExploreMoreGames';
 import ResultBox from './buttons/ResultBox'; 
 import PlayAgain from './buttons/PlayAgain'; 
 
 class GameOver {
-    constructor(posX, posY, width, screenWidth, screenHeight, isMobile, round, restartGame) {
-        this.posX = posX;
-        this.posY = posY; 
-        this.width = width; 
-        this.screenWidth = screenWidth; 
-        this.screenHeight = screenHeight; 
+    constructor(resources, round, restartGame) {
         this.round = round; 
-        this.stars = new Stars(round)
-    
+        this.stars = new Stars(resources, round)
         this.exploreMore = new ExploreMoreButton()
-
         this.resultBox = new ResultBox()
-
         this.playAgainBtn = new PlayAgain(() => restartGame())
     }
 

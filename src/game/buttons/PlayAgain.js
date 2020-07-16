@@ -14,17 +14,21 @@ class PlayAgain extends Entity {
         this.button = new Graphics(); 
 
         this.text = new PIXI.Text("PLAY AGAIN ");
-
         const replayTexure = PIXI.Texture.from(replayImg)
 
         this.replayIcon = new PIXI.Sprite(replayTexure)
+        this.restarting = false; 
 
         this.button.interactive = true; 
         this.button.click = (e) => {
-            this.onClick(e)
+            if (!this.restarting) {
+                this.onClick(e)
+            }
         }
         this.button.touchstart = (e) => {
-            this.onClick(e)
+            if (!this.restarting) {
+                this.onClick(e)
+            }
         }
 
         this.onRestart = onRestart;
@@ -55,13 +59,14 @@ class PlayAgain extends Entity {
     onClick(event) {
         // this.animation && this.animation.pause(); 
         this.animation = gsap.from(this, {
-            y: this.y + 10, 
+            y: this.y + this.h/18, 
             ease: 'power2', 
             delay: 0, 
             duration: 0.5, 
             paused: false,
         })
-        // this.animation.resume(); 
+        // this.animation.resume();
+        this.restarting = true;  
         this.onRestart(); 
 
     }
@@ -106,7 +111,7 @@ class PlayAgain extends Entity {
         this.text.x = this.x + this.w/2 - this.text.width/2; 
         this.text.y = this.y + this.h/2 - this.text.height/2; 
         this.button.clear(); 
-        this.button.beginFill(0xffffff);
+        this.button.beginFill(0xffffff, 0.8);
         this.button.drawRect(this.x, this.y, this.w, this.h)
         this.button.endFill(); 
 

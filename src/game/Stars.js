@@ -1,20 +1,19 @@
-import { Graphics } from 'pixi.js';
 import * as PIXI from 'pixi.js';
 import Entity from './Entity'; 
 import gsap from 'gsap';
-import starImg from './assets/star.png'; 
-import starAlt from './assets/starAlt.png';
+// import starImg from './assets/star.png'; 
+// import starAlt from './assets/starAlt.png';
 
 const FIXED_SCALE = 0.45; 
 const FIXED_SCALE_LG = 0.7; 
 
 
 class Stars extends Entity {
-    constructor(round) {
+    constructor(resources, round) {
         super();
         this.round = round; 
-        this.starTex = PIXI.Texture.from(starImg);
-        this.altTex = PIXI.Texture.from(starAlt);
+        this.starTex = resources.star.texture;
+        this.altTex = resources.starAlt.texture;
         this.starOne = new PIXI.Sprite(this.round >= 4 ? this.starTex : this.altTex); //new Graphics();
         this.starTwo = new PIXI.Sprite(this.round >= 8 ? this.starTex : this.altTex);
         this.starThree = new PIXI.Sprite(this.round === 12 ? this.starTex : this.altTex);

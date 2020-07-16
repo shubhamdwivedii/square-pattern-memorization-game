@@ -29,7 +29,7 @@ class ExploreMoreButton extends Entity {
     reposition() {
         this.x = this.grid.x + this.grid.w/20; 
         this.y = this.grid.y + ((this.grid.w/3)*2) 
-        this.w = this.grid.w - (this.grid.w/20)*2; 
+        this.w = this.grid.w - (this.grid.w/10); 
         this.h = this.grid.w/6 - this.grid.w/48;
         this.scale = this.grid.s; 
         this.r = RADIUS * this.scale;
@@ -51,7 +51,7 @@ class ExploreMoreButton extends Entity {
     onClick(event) {
         this.animation && this.animation.pause(); 
         this.animation = gsap.from(this, {
-            y: this.y + 20, 
+            y: this.y + this.h/18, 
             ease: 'elastic', 
             delay: 0, 
             paused: true, 

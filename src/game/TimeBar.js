@@ -14,6 +14,17 @@ class TimeBar extends Entity {
         this.playTime = playTime //+ 2500; // remove 2500 after testing 
         this.shape = new Graphics(); 
     
+        
+
+        this.reposition = this.reposition.bind(this)
+    }
+
+    reposition() {
+        this.scale = this.grid.s; 
+        this.r = RADIUS_FACTOR * this.scale; 
+    }
+    
+    draw(stage) {
         this.animation = gsap.from(this, {
             y: Math.round(Math.random() * 600) - 1200, 
             w: 0, 
@@ -25,27 +36,7 @@ class TimeBar extends Entity {
                 console.log("TimeBar loading complete")
             }
         })
-
-        this.reposition = this.reposition.bind(this)
-    }
-
-    reposition() {
-        this.scale = this.grid.s; 
-        this.r = RADIUS_FACTOR * this.scale; 
-    }
-    
-    draw() {
-        this.shape.clear();
-        if (this.demoComplete) {
-            this.shape.beginFill(0x10ca5a);
-            this.shape.drawRoundedRect(this.x, this.y , this.w, this.h, this.r)
-        } else {
-            this.shape.beginFill(0x10ca5a);
-            this.shape.drawRoundedRect(this.x, this.y, this.trueWidth, this.h, this.r)
-            this.shape.beginFill(0xfcd21c)
-            this.shape.drawRoundedRect(this.x, this.y, this.w, this.h, this.r)
-        }
-        this.shape.endFill(); 
+        stage.addChild(this.shape)
     }
     
     startDemo(onComplete) {
@@ -65,11 +56,22 @@ class TimeBar extends Entity {
     }
 
     update(delta) {
-        this.draw()
+        this.shape.clear();
+        if (this.demoComplete) {
+            this.shape.beginFill(0x10ca5a);
+            this.shape.drawRoundedRect(this.x, this.y , this.w, this.h, this.r)
+        } else {
+            this.shape.beginFill(0x10ca5a);
+            this.shape.drawRoundedRect(this.x, this.y, this.trueWidth, this.h, this.r)
+            this.shape.beginFill(0xfcd21c)
+            this.shape.drawRoundedRect(this.x, this.y, this.w, this.h, this.r)
+        }
+        this.shape.endFill(); 
     }
 
 
     startTimer(duration, onTimeout) {
+        console.log("Starting TImer")
         this.animation && this.animation.pause(); 
         this.animation = gsap.to(this, {
             w: 0,

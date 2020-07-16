@@ -7,13 +7,14 @@ const MAX_ROWS = 6;
 // const MAX_COLS = 6; 
 // const MAX_COUNT = 18; 
 class Grid {
-    constructor(posX, posY, gridWidth, gridHeight, round, isRandom, gameover, gameclear) {
+    constructor(posX, posY, gridWidth, gridHeight, resources, round, isRandom, gameover, gameclear) {
         // this.rowSize = Math.floor(Math.random() * (MAX_ROWS-3)) + 4; 
         // this.colSize = Math.floor(Math.random() * (MAX_COLS-3)) + 4; 
         this.width = gridWidth;
         this.height = gridHeight;
         this.isRandom = isRandom
         this.gameover = gameover;
+        this.resources = resources; 
         this.cleared = false;
         this.isover = false;
         this.gameclear = gameclear;
@@ -25,11 +26,8 @@ class Grid {
         this.board.beginFill(0x4b85f0, 0.1)
         this.board.drawRect(posX, posY, gridWidth, gridHeight)
         this.board.endFill();
-
+        this.round = round; 
         this.cellSize = gridWidth / MAX_ROWS;
-        this.initialize(round)
-
-
     }
 
     initialize(round) {
@@ -45,25 +43,24 @@ class Grid {
             row.forEach((col, i) => {
                 const posX = this.posX + i * this.cellSize + (this.width - (level.cols * this.cellSize)) / 2;
                 const posY = this.posY + j * this.cellSize + (this.height - (level.rows * this.cellSize)) / 2;
-                this.cells.push(new Cell(posX, posY, this.cellSize, this.cellSize, `${i}-${j}`, (col === 1), () => this.addStrike(), () => this.addCheck(), () => (this.isover || this.cleared)))
+                this.cells.push(new Cell(posX, posY, this.cellSize, this.cellSize, this.resources, (col === 1), () => this.addStrike(), () => this.addCheck(), () => (this.isover || this.cleared)))
             })
         })
-
         // SSSSS Add check if every tile is loaded or not
-        setTimeout(this.showActiveCells.bind(this), 2000)
+       
     }
 
     draw(stage) {
+        this.initialize(this.round)
         // stage.addChild(this.board);
-
-        // start timer here; 
         this.startTime = new Date();
         if (this.timeBar) {
-            stage.addChild(this.timeBar.shape)
+            this.timeBar.draw(stage)
         }
         this.cells.forEach(cell => {
-            stage.addChild(cell.square)
+            cell.draw(stage)
         })
+        setTimeout(this.showActiveCells.bind(this), 2000)
     }
 
     clear(stage, onComplete) {
@@ -78,14 +75,13 @@ class Grid {
     }
 
     reset(stage, round) {
-        this.initialize(round);
+        this.round = round; 
         this.draw(stage);
     }
 
     update(delta) {
         this.timeBar.update(delta)
         this.cells.forEach(cell => cell.update(delta))
-
     }
 
     addCheck() {
@@ -99,11 +95,6 @@ class Grid {
             return true;
         }
         return false;
-
-    }
-
-    isLastCheck() {
-        return (this.check === 1)
     }
 
     addStrike() {
@@ -124,8 +115,6 @@ class Grid {
                 this.hideActiveCells(); //.bind(this)
             })
         }, 380)
-
-        // setTimeout(this.hideActiveCells.bind(this), 4000)
     }
 
     hideActiveCells() {
