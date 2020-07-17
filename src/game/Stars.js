@@ -40,11 +40,13 @@ class Stars extends Entity {
 
     draw(stage, round) {
         this.round = round; 
-        this.starOne.texture = round >= 4 ? this.starTex : this.altTex;
-        this.starTwo.texture = round >= 8 ? this.starTex : this.altTex;
-        this.starThree.texture = round === 12 ? this.starTex : this.altTex;
-        // this.remark.text = getText(round)
-        // this.remark.fontSize = (this.remark.fontSize*0.5) //this.scale)
+
+        this.starOne.texture = round >= 0 ? this.starTex : this.altTex; // >= 4 
+        this.starTwo.texture = round >= 6 ? this.starTex : this.altTex; // >= 8 
+        this.starThree.texture = round >= 11 ? this.starTex : this.altTex; // >= 12
+
+
+
         this.remark = this.getRemarkText(round, this.scale)
         this.starOne.scale.set(FIXED_SCALE * this.scale);
         this.starTwo.scale.set(FIXED_SCALE_LG * this.scale);
@@ -122,15 +124,15 @@ function gradient(from, to) {
   }
 
   function getText(round) {
-    let text = "You did poorly!"
-    if (round >= 4) {
-        text = "You did okay!"
+    let text = "Kill yourself!"
+    if (round >= 0) { // 4
+        text = "You can do better!"
     } 
-    if (round >= 8) {
+    if (round >= 6) { // 8
         text = "You did great!"
     }
-    if (round === 12) {
-        text = "You did amazing!"
+    if (round === 11) { // 12
+        text = "Excellent work!"
     }
     return text; 
 }
