@@ -2,7 +2,8 @@ import { Graphics } from 'pixi.js';
 import Entity from './Entity'; 
 import gsap from 'gsap'; 
 import * as PIXI from 'pixi.js';
-import logoImg from './assets/logo.png'; 
+// import logoImg from './assets/logo.png'; 
+import logoImg from './assets/myLogo.png';
 
 
 const RADIUS_FACTOR = 16; 

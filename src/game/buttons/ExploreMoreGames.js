@@ -7,12 +7,15 @@ const FONT_SIZE = 32;
 const RADIUS = 15; 
 
 class ExploreMoreButton extends Entity {
-    constructor() {
+    constructor(onAction) {
         super()
         this.button = new Graphics(); 
        
 
-        this.text = new PIXI.Text("EXPLORE MORE GAMES")
+        // this.text = new PIXI.Text("EXPLORE MORE GAMES")
+        this.text = new PIXI.Text("PLAY AGAIN")
+
+        this.actioning = false; 
 
         this.button.interactive = true; 
         this.button.click = (e) => {
@@ -21,6 +24,8 @@ class ExploreMoreButton extends Entity {
         this.button.touchstart = (e) => {
             this.onClick(e)
         }
+
+        this.onAction = onAction; 
         
         this.reposition = this.reposition.bind(this)
     }
@@ -33,6 +38,8 @@ class ExploreMoreButton extends Entity {
         this.h = this.grid.w/6 - this.grid.w/48;
         this.scale = this.grid.s; 
         this.r = RADIUS * this.scale;
+
+        this.reduceWidth = this.w/3; // 0; 
 
 
     }
@@ -49,20 +56,27 @@ class ExploreMoreButton extends Entity {
     }
 
     onClick(event) {
-        this.animation && this.animation.pause(); 
-        this.animation = gsap.from(this, {
-            y: this.y + this.h/18, 
-            ease: 'elastic', 
-            delay: 0, 
-            paused: true, 
-            duration: 0.8,
-        })
-        this.animation.resume(); 
+        if (!this.actioning) {
+            this.animation && this.animation.pause(); 
+            this.animation = gsap.from(this, {
+                y: this.y + this.h/18, 
+                ease: 'elastic', 
+                delay: 0, 
+                paused: true, 
+                duration: 0.8,
+            })
+            this.animation.resume(); 
+            this.actioning = true; 
+            this.onAction(); 
+            setTimeout(() => {
+                this.actioning = false; 
+            }, 1600)
+        }
     }
 
 
     draw(stage) {
-        this.text = new PIXI.Text("EXPLORE MORE GAMES", this.getFontStyle(this.scale))
+        this.text = new PIXI.Text(this.text.text, this.getFontStyle(this.scale))
         stage.addChild(this.button)
         stage.addChild(this.text)
 
@@ -92,14 +106,14 @@ class ExploreMoreButton extends Entity {
     }
 
     update(delta) {
-        this.text.x = this.x + this.w/2 - this.text.width/2; 
+        this.text.x = this.x + this.reduceWidth/2 + (this.w - this.reduceWidth)/2 - this.text.width/2; 
         this.text.y = this.y + ((this.h-this.grid.w/48)/2)  - this.text.height/2; 
         this.button.clear(); 
         this.button.lineStyle(2, 0x000000);
         this.button.beginFill(0xc9a91e)
-        this.button.drawRoundedRect(this.x, this.y, this.w, this.h, this.r)
+        this.button.drawRoundedRect(this.x + this.reduceWidth/2, this.y, this.w - this.reduceWidth, this.h, this.r)
         this.button.beginFill(0xfcd21c);
-        this.button.drawRoundedRect(this.x, this.y, this.w, this.h - (this.grid.w/48), this.r)
+        this.button.drawRoundedRect(this.x + this.reduceWidth/2, this.y, this.w - this.reduceWidth, this.h - (this.grid.w/48), this.r)
         this.button.endFill(); 
     }
 }
