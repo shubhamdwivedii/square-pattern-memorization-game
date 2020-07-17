@@ -205,6 +205,7 @@ class Cell extends Entity {
     }
 
     moveBy(x,y, onMoveCb) {
+        this.posX = this.x + x; 
         this.animation = gsap.to(this, {
             x: this.x + x, 
             y: this.y + y, 

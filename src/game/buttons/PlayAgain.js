@@ -68,6 +68,9 @@ class PlayAgain extends Entity {
         // this.animation.resume();
         this.restarting = true;  
         this.onRestart(); 
+        setTimeout(() => {
+            this.restarting = false; 
+        }, 1600)
 
     }
 

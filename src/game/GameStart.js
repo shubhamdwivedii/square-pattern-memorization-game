@@ -29,6 +29,8 @@ You know what to do now!`);
 
         this.onStart = onStart; 
         this.offset = { x: 0, y: 0}
+        this.buttonOffsetY = 0;
+        this.starting = false; 
         if (this.screen.isMobile) {
             this.offset.y = 5000
         } else {
@@ -97,8 +99,20 @@ You know what to do now!`);
     }
 
     onClick(event) {
-        console.log("STARTING")
-        this.onStart(); 
+        if (!this.starting) {
+            this.animation = gsap.from(this, {
+                buttonOffsetY: this.buttonOffsetY + this.buttonHeight/18, 
+                ease: 'elastic', 
+                delay: 0, 
+                paused: false, 
+                duration: 0.8, 
+            })
+            this.starting = true; 
+            this.onStart(); 
+            setTimeout(() => {
+                this.starting = false; 
+            }, 1600)
+        }
     }
 
 
@@ -109,6 +123,11 @@ You know what to do now!`);
         this.timeText = new PIXI.Text(this.timeText.text, this.getRemarkFont(this.scale, this.grid.w))
         this.levelsText = new PIXI.Text(this.levelsText.text, this.getRemarkFont(this.scale, this.grid.w))
         this.buttonLabel = new PIXI.Text("START", this.getButtonFont(this.scale))
+        
+        if (this.screen.isMobile) {
+            this.buttonOffsetY = -(this.grid.w/6)/2;
+        }
+        
         stage.addChild(this.remark)
         stage.addChild(this.infoBox)
         stage.addChild(this.levelsLabel)
@@ -135,7 +154,7 @@ You know what to do now!`);
             y: -2000, 
             ease: 'power2', 
             delay: 0.4, 
-            duration: 0.8, 
+            duration: 0.6, 
             paused: false, 
             onComplete: () => {
                 stage.removeChild(this.remark)
@@ -169,9 +188,8 @@ You know what to do now!`);
         this.levelsText.x = posX + this.buttonWidth - this.buttonWidth/4 - this.levelsText.width/2; 
         this.levelsText.y = this.timeText.y;  
 
-
         this.buttonLabel.x = this.offset.x + this.x - this.buttonLabel.width/2; 
-        this.buttonLabel.y = this.offset.y + this.y + ((this.grid.w/4) * 3/2) - this.buttonHeight*3/2 + (this.buttonHeight- this.grid.w/48)/2 - this.buttonLabel.height/2; 
+        this.buttonLabel.y = this.buttonOffsetY + this.offset.y + this.y + ((this.grid.w/4) * 3/2) - this.buttonHeight*3/2 + (this.buttonHeight- this.grid.w/48)/2 - this.buttonLabel.height/2; 
         
         this.infoBox.clear(); 
         this.infoBox.lineStyle(2, 0x4b85f0)
@@ -182,9 +200,9 @@ You know what to do now!`);
         this.button.clear(); 
         this.button.lineStyle(2, 0x000000);
         this.button.beginFill(0xc9a91e)
-        this.button.drawRoundedRect(posX, this.offset.y + this.y + ((this.grid.w/4) * 3/2) - this.buttonHeight*3/2, this.buttonWidth, this.buttonHeight, this.r)
+        this.button.drawRoundedRect(posX, this.buttonOffsetY + this.offset.y + this.y + ((this.grid.w/4) * 3/2) - this.buttonHeight*3/2, this.buttonWidth, this.buttonHeight, this.r)
         this.button.beginFill(0xfcd21c);
-        this.button.drawRoundedRect(posX, this.offset.y + this.y + ((this.grid.w/4) * 3/2) - this.buttonHeight*3/2, this.buttonWidth, this.buttonHeight - (this.grid.w/48), this.r)
+        this.button.drawRoundedRect(posX, this.buttonOffsetY + this.offset.y + this.y + ((this.grid.w/4) * 3/2) - this.buttonHeight*3/2, this.buttonWidth, this.buttonHeight - (this.grid.w/48), this.r)
         this.button.endFill(); 
     }
 

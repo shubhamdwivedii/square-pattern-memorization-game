@@ -8,7 +8,7 @@ import gsap from 'gsap';
 const MAX_ROWS = 4; 
 const FONT_SIZE = 24; 
 const RELATIVE_SCALE = 5/4.5; 
-const DEMO_TIME = 4000; 
+const DEMO_TIME = 200; //4000; 
 const PLAY_TIME = 10000; 
 
 
@@ -64,6 +64,14 @@ class Tutorial extends Entity {
             cell.draw(stage)
         })
         stage.addChild(this.instructions)
+        gsap.from(this, {
+            insOffsetY: this.screen.h, 
+            ease: 'power3', 
+            delay: 0.2, 
+            duration: 1.5, 
+            paused: false,
+        })
+
         setTimeout(this.showActiveCells.bind(this), 2000)
     }
 
@@ -74,7 +82,9 @@ class Tutorial extends Entity {
         this.cells.forEach((cell, idx) => cell.unClickable(() => {
             stage.removeChild(cell.square)
             if (idx >= last) {
-                onComplete(); 
+                setTimeout(() => {
+                    onComplete(); 
+                }, 800)
             }
         }))
         // remove everything else 

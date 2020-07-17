@@ -138,6 +138,7 @@ function setup(loader, resources) {
     header = new Header(resources, round, MAX_ROUNDS, isMobile, onQuit, onMute)
     tutorialGrid = new Tutorial(resources, () => {
         tutorialGrid.remove(game.stage, () => {
+            console.log("Removing Tutorial Complete")
             header.draw(game.stage, round)
             grid.draw(game.stage)
             STATE = play; 
