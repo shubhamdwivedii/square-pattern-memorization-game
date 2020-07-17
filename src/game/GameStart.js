@@ -9,13 +9,13 @@ const LG_FONT_SIZE = 42;
 const RADIUS = 15; 
 
 const LEVELS = 12; 
-const TIME_REQ = 3; 
+const TIME_REQ = 2; //3; 
 
 class GameStart extends Entity {
     constructor(onStart) {
         super(); 
         this.remark = new PIXI.Text(`Good job!
-You know what to do now!`);
+Let's get started then!`);
 
         this.infoBox = new Graphics(); 
         this.levelsLabel = new PIXI.Text("Levels")

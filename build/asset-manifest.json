@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/square-pattern-memorization-game/static/css/main.27f207e5.chunk.css",
-    "main.js": "/square-pattern-memorization-game/static/js/main.4efba01f.chunk.js",
-    "main.js.map": "/square-pattern-memorization-game/static/js/main.4efba01f.chunk.js.map",
+    "main.js": "/square-pattern-memorization-game/static/js/main.fcf8e95a.chunk.js",
+    "main.js.map": "/square-pattern-memorization-game/static/js/main.fcf8e95a.chunk.js.map",
     "runtime-main.js": "/square-pattern-memorization-game/static/js/runtime-main.a4dc38d7.js",
     "runtime-main.js.map": "/square-pattern-memorization-game/static/js/runtime-main.a4dc38d7.js.map",
     "static/js/2.04f7041c.chunk.js": "/square-pattern-memorization-game/static/js/2.04f7041c.chunk.js",
     "static/js/2.04f7041c.chunk.js.map": "/square-pattern-memorization-game/static/js/2.04f7041c.chunk.js.map",
     "index.html": "/square-pattern-memorization-game/index.html",
-    "precache-manifest.9f5b1b7c4aa639f08285e7f5c64eb14f.js": "/square-pattern-memorization-game/precache-manifest.9f5b1b7c4aa639f08285e7f5c64eb14f.js",
+    "precache-manifest.ce137efe9205380e7f082440bc530690.js": "/square-pattern-memorization-game/precache-manifest.ce137efe9205380e7f082440bc530690.js",
     "service-worker.js": "/square-pattern-memorization-game/service-worker.js",
     "static/css/main.27f207e5.chunk.css.map": "/square-pattern-memorization-game/static/css/main.27f207e5.chunk.css.map",
     "static/js/2.04f7041c.chunk.js.LICENSE.txt": "/square-pattern-memorization-game/static/js/2.04f7041c.chunk.js.LICENSE.txt",
@@ -22,6 +22,6 @@
     "static/js/runtime-main.a4dc38d7.js",
     "static/js/2.04f7041c.chunk.js",
     "static/css/main.27f207e5.chunk.css",
-    "static/js/main.4efba01f.chunk.js"
+    "static/js/main.fcf8e95a.chunk.js"
   ]
 }

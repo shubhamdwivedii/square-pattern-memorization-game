@@ -44,10 +44,10 @@ class Stars extends Entity {
         this.round = round; 
 
         let starsCount = 0;
-        if (levelsCleared >= 0) {
+        if (levelsCleared >= 2) {
             starsCount = 1; 
         } 
-        if (levelsCleared >= 5) {
+        if (levelsCleared >= 6) {
             starsCount = 2; 
         }  
         if (levelsCleared >= 10) {
@@ -137,7 +137,7 @@ function gradient(from, to) {
   }
 
   function getText(starsCount) {
-    let text = "Kill yourself!"
+    let text = "Just kill yourself!"
     if (starsCount > 0) { // 4
         text = "You can do better!"
     } 
