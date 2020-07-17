@@ -12,9 +12,9 @@ class GameOver {
         this.playAgainBtn = new PlayAgain(() => restartGame())
     }
 
-    draw(stage, round, timeTaken, ratio) {
+    draw(stage, round, levelsCleared, timeTaken, ratio) {
         this.round = round; 
-        this.stars.draw(stage, round)
+        this.stars.draw(stage, round, levelsCleared);
         this.resultBox.draw(stage, timeTaken, ratio);
         this.exploreMore.draw(stage);
         this.playAgainBtn.draw(stage);

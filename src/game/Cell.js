@@ -1,12 +1,13 @@
 import { Graphics } from 'pixi.js';
-import Entity from './Entity'; 
+import Entity from './Entity';
 import { isMute } from '../game';
 import gsap from 'gsap';
 import sound from 'pixi-sound';
 
 
-const RADIUS_FACTOR = 10; 
-const LINE_WIDTH = 8; 
+const RADIUS_FACTOR = 10;
+const LINE_WIDTH = 8;
+const ENABLE_CIRCLE_ANIM = true;
 
 class Cell extends Entity {
     constructor(posX, posY, width, height, resources, active, addStrike, addCheck, isOver) {
@@ -22,8 +23,8 @@ class Cell extends Entity {
         this.posY = posY;
         this.width = width;
         this.height = height;
-       
-      
+
+        this.radius = 0;
 
         this.strikeSound = sound.Sound.from(resources.strikeSnd.sound);
         this.checkSound = sound.Sound.from(resources.checkSnd.sound);
@@ -50,15 +51,15 @@ class Cell extends Entity {
     }
 
     reposition() {
-        this.scale = this.grid.s; 
-        this.r = RADIUS_FACTOR * this.scale; 
-        this.lineWidth = LINE_WIDTH * this.scale; 
+        this.scale = this.grid.s;
+        this.r = RADIUS_FACTOR * this.scale;
+        this.lineWidth = LINE_WIDTH * this.scale;
     }
 
     draw(stage) {
         this.animation = gsap.from(this, {
             x: this.posX + 4 + ((this.width - 8) / 2),
-            y: Math.round(Math.random() * 600) - 1200, 
+            y: Math.round(Math.random() * 600) - 1200,
             w: 10,//width - 8, 
             h: 10, //height - 8,
             ease: 'elastic',
@@ -94,6 +95,9 @@ class Cell extends Entity {
         this.square.clear()
         this.square.beginFill(color) //(0xBB81CD)
         this.square.drawRoundedRect(x, y, w, h, r)
+        if (this.radius >= 5) {
+            this.square.drawCircle(x + w / 2, y + h / 2, this.radius)
+        }
 
         if (this.active && this.isLast) {
             this.square.lineStyle(this.lineWidth, 0xFFFFFF, 0.7)
@@ -115,27 +119,45 @@ class Cell extends Entity {
 
     onClick(event) {
         if (!this.clicked) {
-            if (this.active) {
-                const isLast = this.addCheck();
-                if (isLast) {
-                    this.isLast = true;
-                    !isMute() && this.winSound.play();
-                } else {
-                    !isMute() && this.checkSound.play();
-                }
-            } else {
-                this.addStrike();
-                !isMute() && this.strikeSound.play(); 
-            }
-
             this.clicked = true;
+            this.square.zIndex = 4
             this.popAnimate(() => {
+                this.square.zIndex = 0;
                 if (!this.active) {
                     this.flipAnimate(() => {
                         this.clicked = false;
                     })
                 }
             })
+
+            if (this.active) {
+                const isLast = this.addCheck();
+                if (isLast) {
+                    this.isLast = true;
+
+                    if (ENABLE_CIRCLE_ANIM) {
+                        this.square.zIndex = 6;
+                        this.circlePop(() => {
+                            this.square.zIndex = 0;
+                        })
+                    }
+
+                    !isMute() && this.winSound.play();
+                } else {
+                    !isMute() && this.checkSound.play();
+                }
+            } else {
+                this.addStrike();
+
+                if (ENABLE_CIRCLE_ANIM) {
+                    this.square.zIndex = 6;
+                    this.circlePop(() => {
+                        this.square.zIndex = 0;
+                    })
+                }
+
+                !isMute() && this.strikeSound.play();
+            }
         }
     }
 
@@ -161,7 +183,7 @@ class Cell extends Entity {
         })
     }
 
-   
+
 
     popAnimate(onPopCb) {
         // this.animation.pause();
@@ -204,16 +226,39 @@ class Cell extends Entity {
         // this.animation.resume();
     }
 
-    moveBy(x,y, onMoveCb) {
-        this.posX = this.x + x; 
+    moveBy(x, y, onMoveCb) {
+        this.posX = this.x + x;
         this.animation = gsap.to(this, {
-            x: this.x + x, 
-            y: this.y + y, 
-            ease: 'power2', 
-            duration: 0.5, 
-            delay: 0.2, 
+            x: this.x + x,
+            y: this.y + y,
+            ease: 'power2',
+            duration: 0.5,
+            delay: 0.2,
             onComplete: () => {
-                onMoveCb && onMoveCb(); 
+                onMoveCb && onMoveCb();
+            }
+        })
+    }
+
+
+    circlePop(onComplete) {
+        gsap.to(this, {
+            radius: this.width - this.width / 5,
+            ease: 'elastic',
+            duration: 1,
+            delay: 0,
+            onComplete: () => {
+                setTimeout(() => {
+                    gsap.to(this, {
+                        radius: 0,
+                        ease: 'power2',
+                        duration: 1,
+                        delay: 0,
+                        onComplete: () => {
+                            onComplete()
+                        },
+                    })
+                }, 200)
             }
         })
     }
