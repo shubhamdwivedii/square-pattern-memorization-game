@@ -32,7 +32,6 @@ class Loading extends Entity {
 
     draw(stage) {
         this.logo.scale.set(LOGO_SCALE * this.scale)
-        console.log("LOADING SCALE", this.scale, )
         this.logo.anchor.set(0.5)
         stage.addChild(this.bar)
         stage.addChild(this.logo)
@@ -52,7 +51,6 @@ class Loading extends Entity {
     }
 
     progress(percentage) {
-        console.log("Loading Progress", percentage)
         const width = (this.tw * percentage)/100; 
         this.animation = gsap.to(this, {
             w: width, 

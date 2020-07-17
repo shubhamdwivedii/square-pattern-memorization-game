@@ -53,7 +53,8 @@ class Grid {
     draw(stage) {
         this.initialize(this.round)
         // stage.addChild(this.board);
-        this.startTime = new Date();
+        this.startTime = new Date(); // reinitialize when demo is over
+
         if (this.timeBar) {
             this.timeBar.draw(stage)
         }
@@ -112,6 +113,7 @@ class Grid {
         })
         setTimeout(() => {
             this.timeBar.startDemo(() => {
+                this.startTime = new Date(); 
                 this.hideActiveCells(); //.bind(this)
             })
         }, 380)
