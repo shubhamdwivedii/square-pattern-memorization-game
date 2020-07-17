@@ -7,7 +7,7 @@ import sound from 'pixi-sound';
 
 const RADIUS_FACTOR = 10;
 const LINE_WIDTH = 8;
-const ENABLE_CIRCLE_ANIM = true;
+const ENABLE_CIRCLE_ANIM = false;
 
 class Cell extends Entity {
     constructor(posX, posY, width, height, resources, active, addStrike, addCheck, isOver) {

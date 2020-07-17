@@ -29,7 +29,7 @@ game.renderer.resize(window.innerWidth, window.innerHeight)
 
 
 let STATE = splash;
-const FOREVER_MODE = true; 
+const FOREVER_MODE = false; 
 export const WIDTH = game.renderer.width;
 export const HEIGHT = game.renderer.height;
 export const isMobile = WIDTH / HEIGHT <= 1;
