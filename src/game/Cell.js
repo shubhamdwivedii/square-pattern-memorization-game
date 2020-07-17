@@ -7,7 +7,7 @@ import sound from 'pixi-sound';
 
 const RADIUS_FACTOR = 10;
 const LINE_WIDTH = 8;
-const ENABLE_CIRCLE_ANIM = true;
+const ENABLE_CIRCLE_ANIM = false;
 export const LOAD_DURATION = 2; 
 export const LOAD_DELAY = 0.2; 
 
