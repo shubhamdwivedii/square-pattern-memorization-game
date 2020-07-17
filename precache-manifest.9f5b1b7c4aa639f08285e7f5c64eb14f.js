@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "a55e71b315ffac59404a09f012a26f50",
+    "revision": "9ea05e663808bc37ffab64229d12ef56",
     "url": "/square-pattern-memorization-game/index.html"
   },
   {
-    "revision": "93fc5dda2d20129295f6",
+    "revision": "06d148f016447651ac37",
     "url": "/square-pattern-memorization-game/static/css/main.27f207e5.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/square-pattern-memorization-game/static/js/2.04f7041c.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "93fc5dda2d20129295f6",
-    "url": "/square-pattern-memorization-game/static/js/main.a0b7bfe9.chunk.js"
+    "revision": "06d148f016447651ac37",
+    "url": "/square-pattern-memorization-game/static/js/main.4efba01f.chunk.js"
   },
   {
     "revision": "60624bad60c573ab2e5f",
