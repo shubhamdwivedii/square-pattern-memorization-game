@@ -28,6 +28,7 @@ game.renderer.resize(window.innerWidth, window.innerHeight)
 
 let STATE = splash;
 const FOREVER_MODE = false; 
+const RANDOM_MODE = true; 
 const TUTORIAL_ENABLED = true;
 export const WIDTH = game.renderer.width;
 export const HEIGHT = game.renderer.height;
@@ -163,7 +164,7 @@ game.loader
 function setup(loader, resources) {
     console.log("Setup Initiated")
     header = new Header(resources, round, MAX_ROUNDS, isMobile, onQuit, onMute)
-    grid = new Grid(gridX, gridY, gridWidth, gridWidth, resources, round, false, (d, c, t) => onGameOver(d, c, t), (d, c, t) => onGameClear(d, c, t))
+    grid = new Grid(gridX, gridY, gridWidth, gridWidth, resources, round, RANDOM_MODE, (d, c, t) => onGameOver(d, c, t), (d, c, t) => onGameClear(d, c, t))
     gameOver = new GameOver(resources, round, restart)
     
     if (TUTORIAL_ENABLED) {

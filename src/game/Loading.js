@@ -8,6 +8,7 @@ import logoImg from './assets/myLogo.png';
 
 const RADIUS_FACTOR = 16; 
 const LOGO_SCALE = 0.6; 
+const LOGO_SCALE_PHONE = 0.4; 
 
 class Loading extends Entity {
     constructor() {
@@ -32,7 +33,7 @@ class Loading extends Entity {
 
 
     draw(stage) {
-        this.logo.scale.set(LOGO_SCALE * this.scale)
+        this.logo.scale.set((this.screen.isMobile ? LOGO_SCALE_PHONE : LOGO_SCALE) * this.scale)
         this.logo.anchor.set(0.5)
         stage.addChild(this.bar)
         stage.addChild(this.logo)
