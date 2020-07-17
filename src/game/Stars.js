@@ -38,16 +38,29 @@ class Stars extends Entity {
         this.scale = this.grid.s; 
     }
 
-    draw(stage, round) {
+    draw(stage, round, levelsCleared) {
+
+        console.log("LEVLES CLEARED STARTS", levelsCleared)
         this.round = round; 
 
-        this.starOne.texture = round >= 0 ? this.starTex : this.altTex; // >= 4 
-        this.starTwo.texture = round >= 6 ? this.starTex : this.altTex; // >= 8 
-        this.starThree.texture = round >= 11 ? this.starTex : this.altTex; // >= 12
+        let starsCount = 0;
+        if (levelsCleared >= 0) {
+            starsCount = 1; 
+        } 
+        if (levelsCleared >= 5) {
+            starsCount = 2; 
+        }  
+        if (levelsCleared >= 10) {
+            starsCount = 3; 
+        }
+
+        this.starOne.texture = starsCount >= 1 ? this.starTex : this.altTex; // >= 4 
+        this.starTwo.texture = starsCount >= 2 ? this.starTex : this.altTex; // >= 8 
+        this.starThree.texture = starsCount >= 3 ? this.starTex : this.altTex; // >= 12
 
 
 
-        this.remark = this.getRemarkText(round, this.scale)
+        this.remark = this.getRemarkText(starsCount, this.scale)
         this.starOne.scale.set(FIXED_SCALE * this.scale);
         this.starTwo.scale.set(FIXED_SCALE_LG * this.scale);
         this.starThree.scale.set(FIXED_SCALE * this.scale);
@@ -97,8 +110,8 @@ class Stars extends Entity {
     
     }
 
-    getRemarkText(round, scale) {
-        let text = getText(round)
+    getRemarkText(starsCount, scale) {
+        let text = getText(starsCount)
 
         const fontStyle = new PIXI.TextStyle({
             fontFamily: "Helvetica",
@@ -123,15 +136,15 @@ function gradient(from, to) {
     return new PIXI.Texture.from(c);
   }
 
-  function getText(round) {
+  function getText(starsCount) {
     let text = "Kill yourself!"
-    if (round >= 0) { // 4
+    if (starsCount > 0) { // 4
         text = "You can do better!"
     } 
-    if (round >= 6) { // 8
+    if (starsCount > 1) { // 8
         text = "You did great!"
     }
-    if (round === 11) { // 12
+    if (starsCount > 2) { // 12
         text = "Excellent work!"
     }
     return text; 
