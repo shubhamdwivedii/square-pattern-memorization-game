@@ -4,7 +4,6 @@ import Tutorial from './Tutorial';
 import GameOver from './GameOver';
 import Background from './Background'
 import Loading from './Loading';
-
 import closeImg from './assets/close.png';
 import muteImg from './assets/sound.png';
 import unMuteImg from './assets/mute.png';
@@ -13,7 +12,6 @@ import starAlt from './assets/starAlt.png';
 import checkSnd from './assets/check.mp3';
 import clearSnd from './assets/clear.mp3';
 import strikeSnd from './assets/strike.mp3';
-
 
 import Header from './Header';
 
@@ -29,7 +27,8 @@ game.renderer.resize(window.innerWidth, window.innerHeight)
 
 
 let STATE = splash;
-const FOREVER_MODE = false; 
+const FOREVER_MODE = true; 
+const TUTORIAL_ENABLED = true;
 export const WIDTH = game.renderer.width;
 export const HEIGHT = game.renderer.height;
 export const isMobile = WIDTH / HEIGHT <= 1;
@@ -164,25 +163,31 @@ game.loader
 function setup(loader, resources) {
     console.log("Setup Initiated")
     header = new Header(resources, round, MAX_ROUNDS, isMobile, onQuit, onMute)
-    tutorialGrid = new Tutorial(resources, () => {
-        tutorialGrid.remove(container, () => {
-            header.draw(container, round)
-            grid.draw(container)
-            STATE = play;
-        });
-    })
-
     grid = new Grid(gridX, gridY, gridWidth, gridWidth, resources, round, false, (d, c, t) => onGameOver(d, c, t), (d, c, t) => onGameClear(d, c, t))
     gameOver = new GameOver(resources, round, restart)
+    
+    if (TUTORIAL_ENABLED) {
+        tutorialGrid = new Tutorial(resources, () => {
+            tutorialGrid.remove(container, () => {
+                header.draw(container, round)
+                grid.draw(container)
+                STATE = play;
+            });
+        })
+    } 
     setTimeout(() => {
         loadingScreen.remove(container)
         setTimeout(() => {
-            tutorialGrid.draw(container)
-            // header.draw(container, round)
-           // grid.draw(container)
+            if (!TUTORIAL_ENABLED) {
+                header.draw(container, round)
+                grid.draw(container)
+                STATE = play; 
+            } else {
+                tutorialGrid.draw(container)
+                STATE = tutorial;
+            }
  
             // Ticker is called 60 times per second.
-            STATE = tutorial;
         }, 500)
     }, 1000)
 }

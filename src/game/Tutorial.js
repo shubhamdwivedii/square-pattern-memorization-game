@@ -1,6 +1,6 @@
-import { Graphics } from 'pixi.js'
+// import { Graphics } from 'pixi.js'
 import Entity from './Entity'; 
-import Cell from './Cell'; 
+import Cell, { LOAD_DURATION, LOAD_DELAY } from './Cell'; 
 import GameStart from './GameStart'; 
 import * as PIXI from 'pixi.js'; 
 import gsap from 'gsap'; 
@@ -32,7 +32,7 @@ class Tutorial extends Entity {
     }
 
 
-    initialize() {
+    initialize(onComplete) {
         const level = {
             rows: 3, cols: 3, cells: [
                 [1, 1, 0],
@@ -53,26 +53,29 @@ class Tutorial extends Entity {
                 this.cells.push(new Cell(posX, posY, this.cellSize, this.cellSize, this.resources, (col === 1), () => this.addStrike(), () => this.addCheck(), () => (this.isover || this.cleared)))
             })
         })
+
+        setTimeout(() => onComplete(), 200)
     }
 
     draw(stage) {
-        this.initialize()
         this.instructions = new PIXI.Text(this.instructions.text, this.getFontStyle(this.scale, this.grid.w))
-        this.gameStart.draw(stage)
-        // this.starTime = new Date(); 
-        this.cells.forEach(cell => {
-            cell.draw(stage)
+        this.initialize(() => {
+            this.gameStart.draw(stage)
+            // this.starTime = new Date(); 
+            this.cells.forEach(cell => {
+                cell.draw(stage)
+            })
+            stage.addChild(this.instructions)
+            gsap.from(this, {
+                insOffsetY: this.screen.h, 
+                ease: 'power3', 
+                delay: 0.2, 
+                duration: 1.5, 
+                paused: false,
+            })
+    
+            setTimeout(this.showActiveCells.bind(this), (LOAD_DURATION + 2*LOAD_DELAY)*1000)
         })
-        stage.addChild(this.instructions)
-        gsap.from(this, {
-            insOffsetY: this.screen.h, 
-            ease: 'power3', 
-            delay: 0.2, 
-            duration: 1.5, 
-            paused: false,
-        })
-
-        setTimeout(this.showActiveCells.bind(this), 2000)
     }
 
     remove(stage, onComplete) {

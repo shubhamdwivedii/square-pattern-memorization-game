@@ -13,9 +13,6 @@ class TimeBar extends Entity {
         this.demoComplete = false; 
         this.playTime = playTime //+ 2500; // remove 2500 after testing 
         this.shape = new Graphics(); 
-    
-        
-
         this.reposition = this.reposition.bind(this)
     }
 

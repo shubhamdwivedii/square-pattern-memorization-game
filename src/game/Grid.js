@@ -2,6 +2,7 @@ import { Graphics } from 'pixi.js'
 import Cell from './Cell';
 import TimeBar from './TimeBar';
 import NextLevel from './LevelGenerator';
+import { LOAD_DURATION, LOAD_DELAY } from './Cell';
 
 const MAX_ROWS = 6;
 // const MAX_COLS = 6; 
@@ -30,7 +31,7 @@ class Grid {
         this.cellSize = gridWidth / MAX_ROWS;
     }
 
-    initialize(round) {
+    initialize(round, onComplete) {
         const level = NextLevel(round, this.isRandom)
         this.checks = level.checks;
         this.totalTurns = 0;
@@ -46,22 +47,25 @@ class Grid {
                 this.cells.push(new Cell(posX, posY, this.cellSize, this.cellSize, this.resources, (col === 1), () => this.addStrike(), () => this.addCheck(), () => (this.isover || this.cleared)))
             })
         })
+
+        setTimeout(() => onComplete(), 200)
         // SSSSS Add check if every tile is loaded or not
        
     }
 
     draw(stage) {
-        this.initialize(this.round)
         // stage.addChild(this.board);
-        this.startTime = new Date(); // reinitialize when demo is over
-
-        if (this.timeBar) {
-            this.timeBar.draw(stage)
-        }
-        this.cells.forEach(cell => {
-            cell.draw(stage)
+        this.initialize(this.round, () => {
+            this.startTime = new Date(); // reinitialize when demo is over
+    
+            if (this.timeBar) {
+                this.timeBar.draw(stage)
+            }
+            this.cells.forEach(cell => {
+                cell.draw(stage)
+            })
+            setTimeout(this.showActiveCells.bind(this), (LOAD_DURATION + 2*LOAD_DELAY)*1000)
         })
-        setTimeout(this.showActiveCells.bind(this), 2000)
     }
 
     clear(stage, onComplete) {

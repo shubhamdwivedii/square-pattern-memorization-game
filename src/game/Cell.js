@@ -7,7 +7,9 @@ import sound from 'pixi-sound';
 
 const RADIUS_FACTOR = 10;
 const LINE_WIDTH = 8;
-const ENABLE_CIRCLE_ANIM = false;
+const ENABLE_CIRCLE_ANIM = true;
+export const LOAD_DURATION = 2; 
+export const LOAD_DELAY = 0.2; 
 
 class Cell extends Entity {
     constructor(posX, posY, width, height, resources, active, addStrike, addCheck, isOver) {
@@ -59,12 +61,12 @@ class Cell extends Entity {
     draw(stage) {
         this.animation = gsap.from(this, {
             x: this.posX + 4 + ((this.width - 8) / 2),
-            y: Math.round(Math.random() * 600) - 1200,
+            y: -this.screen.h - Math.round(Math.random() * 600), //1200,
             w: 10,//width - 8, 
             h: 10, //height - 8,
             ease: 'elastic',
-            duration: 1.5,
-            delay: (Math.random() * 0.2),
+            duration: LOAD_DURATION,
+            delay: (Math.random() * (LOAD_DELAY)),
             paused: false,
             onComplete: () => {
                 console.log("Cell Load Animation Complete")
