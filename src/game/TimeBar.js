@@ -9,7 +9,7 @@ class TimeBar extends Entity {
     constructor(posX, posY, width, height, demoTime, playTime) {
         super(posX, posY, width, height)
         this.trueWidth = width; 
-        this.demoTime = demoTime  // + 1000; // remove 1000 after testing 
+        this.demoTime = demoTime //+ 1000; // remove 1000 after testing 
         this.demoComplete = false; 
         this.playTime = playTime //+ 2500; // remove 2500 after testing 
         this.shape = new Graphics(); 
