@@ -20,6 +20,7 @@ class PlayAgain extends Entity {
         this.restarting = false; 
 
         this.button.interactive = true; 
+        this.button.buttonMode = true; 
         this.button.click = (e) => {
             if (!this.restarting) {
                 this.onClick(e)

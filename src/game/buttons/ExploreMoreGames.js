@@ -18,6 +18,7 @@ class ExploreMoreButton extends Entity {
         this.actioning = false; 
 
         this.button.interactive = true; 
+        this.button.buttonMode = true; 
         this.button.click = (e) => {
             this.onClick(e)
         };
