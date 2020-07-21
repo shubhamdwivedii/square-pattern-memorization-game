@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/square-pattern-memorization-game/precache-manifest.ce137efe9205380e7f082440bc530690.js"
+  "/square-pattern-memorization-game/precache-manifest.04dc586c11a61b883ff992dfe7e3dd1f.js"
 );
 
 self.addEventListener('message', (event) => {
