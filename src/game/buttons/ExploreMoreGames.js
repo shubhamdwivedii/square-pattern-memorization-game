@@ -15,6 +15,7 @@ class ExploreMoreButton extends Entity {
         this.text = new PIXI.Text("EXPLORE MORE GAMES")
 
         this.button.interactive = true; 
+        this.button.buttonMode = true; 
         this.button.click = (e) => {
             this.onClick(e)
         };

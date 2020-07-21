@@ -245,7 +245,7 @@ class Cell extends Entity {
 
     circlePop(onComplete) {
         gsap.to(this, {
-            radius: this.width - this.width / 5,
+            radius: this.width - this.width / 3,
             ease: 'elastic',
             duration: 1,
             delay: 0,

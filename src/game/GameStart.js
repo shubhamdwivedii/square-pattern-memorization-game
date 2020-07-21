@@ -38,6 +38,7 @@ You know what to do now!`);
         }
 
         this.button.interactive = true; 
+        this.button.buttonMode = true; 
         this.button.click = (e) => {
             this.onClick(e)
         }
