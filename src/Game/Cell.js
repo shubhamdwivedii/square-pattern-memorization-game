@@ -1,6 +1,6 @@
 import { Graphics } from 'pixi.js';
 import Entity from './Entity';
-import { isMute } from '../game';
+import { isMute } from '../Game';
 import gsap from 'gsap';
 import sound from 'pixi-sound';
 

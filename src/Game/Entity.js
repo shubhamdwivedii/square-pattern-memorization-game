@@ -6,7 +6,7 @@ import {
     gridX, 
     gridY, 
     isMobile, 
-} from '../game'
+} from '../Game'
 
 class Entity {
     constructor(posX = WIDTH/2, posY = HEIGHT/2, width = 10, height = 10, radius = 0, rotation = 0) {

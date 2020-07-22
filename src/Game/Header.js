@@ -2,7 +2,7 @@
 import Entity from './Entity'; 
 import gsap from 'gsap'; 
 import * as PIXI from 'pixi.js';
-import { isMute } from '../game'; 
+import { isMute } from '../Game'; 
 
 const SCALE_FACTOR = 0.5; 
 
